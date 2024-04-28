@@ -10,12 +10,12 @@ def initiate_logs(
 		file_path: typing.Optional[pathlib.Path] = None,
 	):
 
-	logging.getLogger('telegram_ro_bot').setLevel(logging.DEBUG)
+	logging.getLogger('vladpy_telegram_ro_bot').setLevel(logging.DEBUG)
 
-	file_path_loc = file_path or 'logs/telegram_ro_bot.log'
+	file_path_loc = file_path or 'logs/vladpy_telegram_ro_bot.log'
 
 	if stream_f:
-		logging.getLogger('telegram_ro_bot').addHandler(logging.StreamHandler(stream=sys.stdout,))
+		logging.getLogger('vladpy_telegram_ro_bot').addHandler(logging.StreamHandler(stream=sys.stdout,))
 
 	if file_f:
 
@@ -38,6 +38,6 @@ def initiate_logs(
 			)
 		)
 
-		logging.getLogger('telegram_ro_bot').addHandler(file_handler)
+		logging.getLogger('vladpy_telegram_ro_bot').addHandler(file_handler)
 
-	logging.getLogger('telegram_ro_bot').info('logging init')
+	logging.getLogger('vladpy_telegram_ro_bot').info('logging init')

@@ -1,6 +1,6 @@
 [project]
 name = "vladpy-telegram-ro-bot"
-description = "This is a project placeholder, please stand by"
+description = "Telegram Romanian translator Bot, by vladpy"
 license = {text = "MIT"}
 readme = "README.md"
 authors = [
@@ -11,11 +11,12 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3 :: Only",
     "Operating System :: OS Independent",
-    "Typing :: Typed",
-    "Framework :: AsyncIO",
     "Development Status :: 1 - Planning",
 ]
 dependencies = [
+    "click~=8.1",
+    "python-telegram-bot~=21.1",
+    "aiohttp~=3.9",
 ]
 dynamic = [
     "version",
@@ -47,6 +48,9 @@ check-quote-consistency=true
 [tool.pylint.message-control]
 disable=[
     "broad-exception-caught",
+    "missing-function-docstring",
+    "missing-class-docstring",
+    "missing-module-docstring",
 ]
 
 
@@ -65,12 +69,12 @@ strict=true
 
 
 [tool.pdm]
-version = { source = "file", path = "src/telegram-ro-bot/__version__.py" }
+version = { source = "file", path = "src/vladpy_telegram_ro_bot/__version__.py" }
 
 [tool.pdm.dev-dependencies]
 dev = [
-    "pylint~=2.17",
-    "mypy~=1.5",
+    "pylint~=3.1",
+    "mypy~=1.10",
     "yapf~=0.40",
     "pyright~=1.1",
 ]

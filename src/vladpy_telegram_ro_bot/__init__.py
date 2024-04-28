@@ -1,0 +1,1 @@
+from vladpy_telegram_ro_bot import __version__

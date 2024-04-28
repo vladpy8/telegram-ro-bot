@@ -1,6 +1,6 @@
 import click
 
-from _application import Application
+from vladpy_telegram_ro_bot._application import Application
 
 
 @click.command()

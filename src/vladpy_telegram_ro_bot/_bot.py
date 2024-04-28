@@ -9,7 +9,7 @@ class Bot:
 
 	def __init__(self,) -> None:
 
-		self.__logger = logging.getLogger('telegram_ro_bot.Bot')
+		self.__logger = logging.getLogger('vladpy_telegram_ro_bot.Bot')
 
 
 	async def handle_start(
@@ -25,7 +25,10 @@ class Bot:
 		await (
 			context.bot.send_message(
 				chat_id=update.effective_chat.id,
-				text='''I'm a bot, please talk to me!''',
+				text=('''
+					This is Romanian translator Bot.
+					Please, send me romanian text and I will translate it to your language, with
+				'''),
 			)
 		)
 

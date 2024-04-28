@@ -7,9 +7,10 @@
 !LICENSE.md
 !conda_env.yml
 !pdm.toml
+!pdm.lock
 
 !*/**/
-!telegram-ro-bot/
+!src/
 
 !*/**/*.py
 !*/**/*.md

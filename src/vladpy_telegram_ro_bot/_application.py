@@ -1,12 +1,12 @@
 import json
 import logging
+import typing
 
 import telegram
 import telegram.ext
 
-from _initiate_logs import initiate_logs
-
-from _bot import Bot
+from vladpy_telegram_ro_bot._initiate_logs import initiate_logs
+from vladpy_telegram_ro_bot._bot import Bot
 
 
 class Application:
@@ -14,9 +14,9 @@ class Application:
 
 	def __init__(self,) -> None:
 
-		self.__logger = logging.getLogger('telegram_ro_bot.Application')
+		self.__logger = logging.getLogger('vladpy_telegram_ro_bot.Application')
 
-		self.__application = None
+		self.__application: typing.Optional[telegram.ext.Application] = None
 
 		self._bot = Bot()
 
@@ -28,7 +28,11 @@ class Application:
 		self.__create_appplication()
 		assert self.__application is not None
 
+		self.__logger.info('application run begin')
+
 		self.__application.run_polling()
+
+		self.__logger.info('application run end')
 
 
 	def __create_appplication(self,) -> None:
