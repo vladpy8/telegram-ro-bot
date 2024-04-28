@@ -8,7 +8,7 @@ def initiate_logs(
 		stream_f: bool = False,
 		file_f: bool = True,
 		file_path: typing.Optional[pathlib.Path] = None,
-	):
+	) -> None:
 
 	logging.getLogger('vladpy_telegram_ro_bot').setLevel(logging.DEBUG)
 

@@ -11,6 +11,8 @@ class Bot:
 
 		self.__logger = logging.getLogger('vladpy_telegram_ro_bot.Bot')
 
+		self.__logger.info('init')
+
 
 	async def handle_start(
 			self,

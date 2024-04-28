@@ -16,9 +16,11 @@ class Application:
 
 		self.__logger = logging.getLogger('vladpy_telegram_ro_bot.Application')
 
+		self.__logger.info('init')
+
 		self.__application: typing.Optional[telegram.ext.Application] = None
 
-		self._bot = Bot()
+		self.__bot = Bot()
 
 
 	def run(self,) -> None:
@@ -59,21 +61,21 @@ class Application:
 
 		self.__application.add_handler(
 			telegram.ext.CommandHandler(
-				callback=self._bot.handle_start,
+				callback=self.__bot.handle_start,
 				command='start',
 			)
 		)
 
 		self.__application.add_handler(
 			telegram.ext.MessageHandler(
-				callback=self._bot.handle_message,
+				callback=self.__bot.handle_message,
 				filters=(telegram.ext.filters.TEXT & (~telegram.ext.filters.COMMAND)),
 			)
 		)
 
 		self.__application.add_handler(
 			telegram.ext.MessageHandler(
-				callback=self._bot.handle_unknown_command,
+				callback=self.__bot.handle_unknown_command,
 				filters=telegram.ext.filters.COMMAND,
 			)
 		)

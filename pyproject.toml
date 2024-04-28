@@ -56,6 +56,11 @@ disable=[
 
 [tool.pyright]
 typeCheckingMode="strict"
+strictListInference=true
+strictDictionaryInference=true
+reportUninitializedInstanceVariable="error"
+reportMissingTypeArgument="warning"
+reportUnknownMemberType="warning"
 
 
 [tool.mypy]
