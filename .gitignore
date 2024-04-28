@@ -8,6 +8,7 @@
 !conda_env.yml
 !pdm.toml
 !pdm.lock
+!.env-example
 
 !*/**/
 !src/
