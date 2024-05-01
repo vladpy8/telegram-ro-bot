@@ -32,6 +32,8 @@ class Application:
 
 		self.__logger.info('application run begin')
 
+		# TODO run webhook
+
 		self.__application.run_polling()
 
 		self.__logger.info('application run end')
@@ -61,21 +63,25 @@ class Application:
 
 		self.__application.add_handler(
 			telegram.ext.CommandHandler(
-				callback=self.__bot.handle_start,
-				command='start',
+				callback=self.__bot.handle_command,
+				command=(
+					'hello',
+					'help',
+					'about',
+				),
 			)
 		)
 
 		self.__application.add_handler(
 			telegram.ext.MessageHandler(
-				callback=self.__bot.handle_message,
+				callback=self.__bot.handle_translation,
 				filters=(telegram.ext.filters.TEXT & (~telegram.ext.filters.COMMAND)),
 			)
 		)
 
 		self.__application.add_handler(
 			telegram.ext.MessageHandler(
-				callback=self.__bot.handle_unknown_command,
+				callback=self.__bot.handle_command,
 				filters=telegram.ext.filters.COMMAND,
 			)
 		)
