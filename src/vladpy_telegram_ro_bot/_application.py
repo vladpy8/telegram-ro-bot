@@ -58,12 +58,14 @@ class Application:
 		self.__application = (
 			telegram.ext.ApplicationBuilder()
 			.token(telegram_token)
+			.concurrent_updates(True)
 			.build()
 		)
 
 		self.__application.add_handler(
 			telegram.ext.CommandHandler(
 				callback=self.__bot.handle_command,
+				block=False,
 				command=(
 					'hello',
 					'help',
@@ -75,6 +77,7 @@ class Application:
 		self.__application.add_handler(
 			telegram.ext.MessageHandler(
 				callback=self.__bot.handle_translation,
+				block=False,
 				filters=(telegram.ext.filters.TEXT & (~telegram.ext.filters.COMMAND)),
 			)
 		)
@@ -82,6 +85,7 @@ class Application:
 		self.__application.add_handler(
 			telegram.ext.MessageHandler(
 				callback=self.__bot.handle_command,
+				block=False,
 				filters=telegram.ext.filters.COMMAND,
 			)
 		)
