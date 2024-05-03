@@ -4,6 +4,7 @@ import logging
 import telegram
 import telegram.ext
 
+from vladpy_telegram_ro_bot.constants._command import Command
 from vladpy_telegram_ro_bot.constants._answer import Answer
 
 
@@ -19,6 +20,7 @@ class Bot:
 
 	async def handle_command(
 			self,
+			command: typing.Optional[telegram.BotCommand],
 			update: telegram.Update,
 			context: telegram.ext.ContextTypes.DEFAULT_TYPE,
 		) -> None:
@@ -41,9 +43,7 @@ class Bot:
 		if update.effective_user is not None:
 			language_code = update.effective_user.language_code
 
-		command: str = update.message.text.split(' ')[0].strip(' \t\n\r')
-
-		if command == '/hello':
+		if command == Command.hello_en:
 
 			self.__logger.info('command handle, hello: %s', update.update_id)
 
@@ -54,7 +54,7 @@ class Bot:
 				)
 			)
 
-		elif command == '/help':
+		elif command == Command.help_en:
 
 			self.__logger.info('command handle, help: %s', update.update_id)
 
@@ -65,7 +65,7 @@ class Bot:
 				)
 			)
 
-		elif command == '/about':
+		elif command == Command.about_en:
 
 			self.__logger.info('command handle, about: %s', update.update_id)
 

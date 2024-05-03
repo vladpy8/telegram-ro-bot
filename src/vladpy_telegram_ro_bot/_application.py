@@ -1,6 +1,7 @@
 import json
 import logging
 import typing
+import functools
 
 import telegram
 import telegram.ext
@@ -110,32 +111,29 @@ class Application:
 
 		self.__logger.info('bot description set')
 
-		application.add_handler(
-			telegram.ext.CommandHandler(
-				callback=self.__bot.handle_command,
-				block=False,
-				command=tuple((
-					command.command for command in (
-						*Command.command_sequence(None),
-						*Command.command_sequence('ru'),
-					)
-				)),
+		for command in Command.command_sequence(None):
+
+			application.add_handler(
+				telegram.ext.CommandHandler(
+					command=command.command,
+					callback=functools.partial(self.__bot.handle_command, command,),
+					block=False,
+				)
 			)
-		)
 
 		application.add_handler(
 			telegram.ext.MessageHandler(
+				filters=(telegram.ext.filters.TEXT & (~telegram.ext.filters.COMMAND)),
 				callback=self.__bot.handle_translation,
 				block=False,
-				filters=(telegram.ext.filters.TEXT & (~telegram.ext.filters.COMMAND)),
 			)
 		)
 
 		application.add_handler(
 			telegram.ext.MessageHandler(
-				callback=self.__bot.handle_command,
-				block=False,
 				filters=telegram.ext.filters.COMMAND,
+				callback=functools.partial(self.__bot.handle_command, None,),
+				block=False,
 			)
 		)
 
