@@ -4,6 +4,7 @@ import logging
 import telegram
 import telegram.ext
 
+from vladpy_telegram_ro_bot._types import BotType
 from vladpy_telegram_ro_bot.constants._command import Command
 from vladpy_telegram_ro_bot.constants._answer import Answer
 
@@ -48,7 +49,9 @@ class Bot:
 			self.__logger.info('command handle, hello: %s', update.update_id)
 
 			await (
-				context.bot.send_message(
+				self.__send_message_safe(
+					bot=context.bot,
+					update_id=update.update_id,
 					chat_id=update.effective_chat.id,
 					text=Answer.hello(language_code),
 				)
@@ -59,7 +62,9 @@ class Bot:
 			self.__logger.info('command handle, help: %s', update.update_id)
 
 			await (
-				context.bot.send_message(
+				self.__send_message_safe(
+					bot=context.bot,
+					update_id=update.update_id,
 					chat_id=update.effective_chat.id,
 					text=Answer.help(language_code),
 				)
@@ -70,7 +75,9 @@ class Bot:
 			self.__logger.info('command handle, about: %s', update.update_id)
 
 			await (
-				context.bot.send_message(
+				self.__send_message_safe(
+					bot=context.bot,
+					update_id=update.update_id,
 					chat_id=update.effective_chat.id,
 					text=Answer.about(language_code),
 				)
@@ -81,7 +88,9 @@ class Bot:
 			self.__logger.warning('command handle, unknown command "%s": %s', command, update.update_id)
 
 			await (
-				context.bot.send_message(
+				self.__send_message_safe(
+					bot=context.bot,
+					update_id=update.update_id,
 					chat_id=update.effective_chat.id,
 					text=Answer.unknown(language_code),
 				)
@@ -101,10 +110,36 @@ class Bot:
 		assert update.effective_chat is not None
 
 		await (
-			context.bot.send_message(
+			self.__send_message_safe(
+				bot=context.bot,
+				update_id=update.update_id,
 				chat_id=update.effective_chat.id,
 				text='''Перевожу''',
 			)
 		)
 
 		self.__logger.info('translation handle end: %s', update.update_id)
+
+
+	async def __send_message_safe(
+			self,
+			bot: BotType,
+			update_id: int,
+			chat_id: int,
+			text: str,
+		) -> None:
+
+		try:
+
+			await (
+				bot.send_message(
+					chat_id=chat_id,
+					text=text,
+				)
+			)
+
+		except:
+
+			self.__logger.exception('message send: %s', update_id)
+
+			raise

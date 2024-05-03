@@ -4,7 +4,7 @@ import telegram
 import telegram.ext
 
 
-BotType = telegram.ext.ExtBot[int]
+BotType = telegram.ext.ExtBot[typing.Any]
 
 
 UserDataType = dict[typing.Any, typing.Any]
@@ -18,7 +18,7 @@ BotDataType = dict[typing.Any, typing.Any]
 
 CallbackContextType = (
 	telegram.ext.CallbackContext[
-		telegram.ext.ExtBot[None],
+		BotType,
 		UserDataType,
 		ChatDataType,
 		BotDataType,
