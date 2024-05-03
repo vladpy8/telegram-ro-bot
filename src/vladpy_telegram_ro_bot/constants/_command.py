@@ -55,6 +55,50 @@ class Command:
 	)
 
 
+	# TODO
+	help_en: telegram.BotCommand = (
+		telegram.BotCommand(
+			command='help',
+			description=process_text('''
+				HELP STUB
+			''')
+		)
+	)
+
+
+	# TODO
+	help_ru: telegram.BotCommand = (
+		telegram.BotCommand(
+			command='help',
+			description=process_text('''
+				HELP STUB
+			''')
+		)
+	)
+
+
+	# TODO
+	about_en: telegram.BotCommand = (
+		telegram.BotCommand(
+			command='about',
+			description=process_text('''
+				ABOUT STUB
+			''')
+		)
+	)
+
+
+	# TODO
+	about_ru: telegram.BotCommand = (
+		telegram.BotCommand(
+			command='about',
+			description=process_text('''
+				ABOUT STUB
+			''')
+		)
+	)
+
+
 	@staticmethod
 	def command_sequence(language_code: typing.Optional[str],) -> tuple[telegram.BotCommand, ...]:
 
@@ -62,9 +106,13 @@ class Command:
 			({
 				'en': (
 					Command.hello_en,
+					Command.help_en,
+					Command.about_en,
 				),
 				'ru': (
 					Command.hello_ru,
+					Command.help_ru,
+					Command.about_ru,
 				)
 			})
 			[Command.reduce_language_code(language_code)]

@@ -141,3 +141,59 @@ class Answer:
 			})
 			[Answer.reduce_language_code(language_code)]
 		)
+
+
+	# TODO
+	description_en: str = (
+		process_text('''
+			DESCRIPTION STUB
+		''')
+	)
+
+
+	# TODO
+	description_ru: str = (
+		process_text('''
+			DESCRIPTION STUB
+		''')
+	)
+
+
+	@staticmethod
+	def description(language_code: typing.Optional[str],) -> str:
+
+		return (
+			({
+				'en': Answer.description_en,
+				'ru': Answer.description_ru,
+			})
+			[Answer.reduce_language_code(language_code)]
+		)
+
+
+	# TODO
+	short_description_en: str = (
+		process_text('''
+			SHORT DESCRIPTION STUB
+		''')
+	)
+
+
+	# TODO
+	short_description_ru: str = (
+		process_text('''
+			SHORT DESCRIPTION STUB
+		''')
+	)
+
+
+	@staticmethod
+	def short_description(language_code: typing.Optional[str],) -> str:
+
+		return (
+			({
+				'en': Answer.short_description_en,
+				'ru': Answer.short_description_ru,
+			})
+			[Answer.reduce_language_code(language_code)]
+		)

@@ -9,6 +9,7 @@ from vladpy_telegram_ro_bot._types import ApplicationType
 from vladpy_telegram_ro_bot._initiate_logs import initiate_logs
 from vladpy_telegram_ro_bot._bot import Bot
 from vladpy_telegram_ro_bot.constants._command import Command
+from vladpy_telegram_ro_bot.constants._answer import Answer
 
 
 class Application:
@@ -88,6 +89,26 @@ class Application:
 		)
 
 		self.__logger.info('bot commands set')
+
+		await application.bot.set_my_description(
+			description=Answer.description(None),
+		)
+
+		await application.bot.set_my_description(
+			description=Answer.description('ru'),
+			language_code='ru',
+		)
+
+		await application.bot.set_my_short_description(
+			short_description=Answer.short_description(None),
+		)
+
+		await application.bot.set_my_short_description(
+			short_description=Answer.short_description('ru'),
+			language_code='ru',
+		)
+
+		self.__logger.info('bot description set')
 
 		application.add_handler(
 			telegram.ext.CommandHandler(
