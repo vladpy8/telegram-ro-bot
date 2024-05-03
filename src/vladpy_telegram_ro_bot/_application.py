@@ -5,8 +5,10 @@ import typing
 import telegram
 import telegram.ext
 
+from vladpy_telegram_ro_bot._types import ApplicationType
 from vladpy_telegram_ro_bot._initiate_logs import initiate_logs
 from vladpy_telegram_ro_bot._bot import Bot
+from vladpy_telegram_ro_bot.constants._command import Command
 
 
 class Application:
@@ -18,7 +20,7 @@ class Application:
 
 		self.__logger.info('init')
 
-		self.__application: typing.Optional[telegram.ext.Application] = None
+		self.__application: typing.Optional[ApplicationType] = None
 
 		self.__bot = Bot()
 
@@ -30,13 +32,13 @@ class Application:
 		self.__create_appplication()
 		assert self.__application is not None
 
-		self.__logger.info('application run begin')
+		self.__logger.info('run begin')
 
-		# TODO run webhook
+		# TODO run webhook option
 
 		self.__application.run_polling()
 
-		self.__logger.info('application run end')
+		self.__logger.info('run end')
 
 
 	def __create_appplication(self,) -> None:
@@ -53,28 +55,54 @@ class Application:
 
 			telegram_token = json.load(file_obj)['token']
 
-		self.__logger.info('toke read')
+		self.__logger.info('token read')
 
 		self.__application = (
 			telegram.ext.ApplicationBuilder()
 			.token(telegram_token)
 			.concurrent_updates(True)
+			.rate_limiter(telegram.ext.AIORateLimiter())
+			.post_init(self.__initialize_application)
 			.build()
 		)
 
-		self.__application.add_handler(
+		self.__logger.info('create application end')
+
+
+	async def __initialize_application(
+			self,
+			application: ApplicationType,
+		) -> None:
+
+		self.__logger.info('initialize begin')
+
+		assert application.bot is not None
+
+		await application.bot.set_my_commands(
+			commands=tuple(Command.command_sequence(None)),
+		)
+
+		await application.bot.set_my_commands(
+			commands=tuple(Command.command_sequence('ru')),
+			language_code='ru',
+		)
+
+		self.__logger.info('bot commands set')
+
+		application.add_handler(
 			telegram.ext.CommandHandler(
 				callback=self.__bot.handle_command,
 				block=False,
-				command=(
-					'hello',
-					'help',
-					'about',
-				),
+				command=tuple((
+					command.command for command in (
+						*Command.command_sequence(None),
+						*Command.command_sequence('ru'),
+					)
+				)),
 			)
 		)
 
-		self.__application.add_handler(
+		application.add_handler(
 			telegram.ext.MessageHandler(
 				callback=self.__bot.handle_translation,
 				block=False,
@@ -82,7 +110,7 @@ class Application:
 			)
 		)
 
-		self.__application.add_handler(
+		application.add_handler(
 			telegram.ext.MessageHandler(
 				callback=self.__bot.handle_command,
 				block=False,
@@ -90,4 +118,4 @@ class Application:
 			)
 		)
 
-		self.__logger.info('create application end')
+		self.__logger.info('initialize end')

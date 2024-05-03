@@ -4,7 +4,7 @@ import logging
 import telegram
 import telegram.ext
 
-from vladpy_telegram_ro_bot._message import Message
+from vladpy_telegram_ro_bot.constants._answer import Answer
 
 
 class Bot:
@@ -50,7 +50,7 @@ class Bot:
 			await (
 				context.bot.send_message(
 					chat_id=update.effective_chat.id,
-					text=Message.hello(language_code),
+					text=Answer.hello(language_code),
 				)
 			)
 
@@ -61,7 +61,7 @@ class Bot:
 			await (
 				context.bot.send_message(
 					chat_id=update.effective_chat.id,
-					text=Message.help(language_code),
+					text=Answer.help(language_code),
 				)
 			)
 
@@ -72,7 +72,7 @@ class Bot:
 			await (
 				context.bot.send_message(
 					chat_id=update.effective_chat.id,
-					text=Message.about(language_code),
+					text=Answer.about(language_code),
 				)
 			)
 
@@ -83,7 +83,7 @@ class Bot:
 			await (
 				context.bot.send_message(
 					chat_id=update.effective_chat.id,
-					text=Message.unknown(language_code),
+					text=Answer.unknown(language_code),
 				)
 			)
 

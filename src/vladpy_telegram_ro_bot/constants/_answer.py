@@ -2,7 +2,7 @@ import typing
 from textwrap import dedent
 
 
-class Message:
+class Answer:
 
 
 	@staticmethod
@@ -23,23 +23,29 @@ class Message:
 		return language_code_loc
 
 
+	@staticmethod
+	def process_text(text: str,) -> str:
+
+		return (
+			dedent(text)
+			.replace('\n', ' ')
+			.strip(' \t\n\r')
+		)
+
+
 	hello_en: str = (
-		dedent('''
-			Hello. This is Romanian translator Bot. Please, send me romanian text and I will translate it to your
-			language, sentence by sentence.
+		process_text('''
+			Hello. This is Romanian translator Bot. Please, send me romanian text and I will translate it for you,
+			sentence by sentence.
 		''')
-		.replace('\n', ' ')
-		.strip(' \t\n\r')
 	)
 
 
 	hello_ru: str = (
-		dedent('''
+		process_text('''
 			Привет. Это бот переводчик с румынского. Пожалуйста, пришли мне текст на румынском и я его перевду для тебя,
 			предложение за предложением.
 		''')
-		.replace('\n', ' ')
-		.strip(' \t\n\r')
 	)
 
 
@@ -48,28 +54,24 @@ class Message:
 
 		return (
 			({
-				'en': Message.hello_en,
-				'ru': Message.hello_ru,
+				'en': Answer.hello_en,
+				'ru': Answer.hello_ru,
 			})
-			[Message.reduce_language_code(language_code)]
+			[Answer.reduce_language_code(language_code)]
 		)
 
 
 	unknown_en: str = (
-		dedent('''
+		process_text('''
 			Don't understand you
 		''')
-		.replace('\n', ' ')
-		.strip(' \t\n\r')
 	)
 
 
 	unknown_ru: str = (
-		dedent('''
+		process_text('''
 			Не понимаю тебя
 		''')
-		.replace('\n', ' ')
-		.strip(' \t\n\r')
 	)
 
 
@@ -78,30 +80,26 @@ class Message:
 
 		return (
 			({
-				'en': Message.unknown_en,
-				'ru': Message.unknown_ru,
+				'en': Answer.unknown_en,
+				'ru': Answer.unknown_ru,
 			})
-			[Message.reduce_language_code(language_code)]
+			[Answer.reduce_language_code(language_code)]
 		)
 
 
+	# TODO
 	help_en: str = (
-		# TODO
-		dedent('''
+		process_text('''
 			HELP STUB
 		''')
-		.replace('\n', ' ')
-		.strip(' \t\n\r')
 	)
 
 
+	# TODO
 	help_ru: str = (
-		# TODO
-		dedent('''
+		process_text('''
 			HELP STUB
 		''')
-		.replace('\n', ' ')
-		.strip(' \t\n\r')
 	)
 
 
@@ -110,30 +108,26 @@ class Message:
 
 		return (
 			({
-				'en': Message.help_en,
-				'ru': Message.help_ru,
+				'en': Answer.help_en,
+				'ru': Answer.help_ru,
 			})
-			[Message.reduce_language_code(language_code)]
+			[Answer.reduce_language_code(language_code)]
 		)
 
 
+	# TODO
 	about_en: str = (
-		# TODO
-		dedent('''
+		process_text('''
 			ABOUT STUB
 		''')
-		.replace('\n', ' ')
-		.strip(' \t\n\r')
 	)
 
 
+	# TODO
 	about_ru: str = (
-		# TODO
-		dedent('''
+		process_text('''
 			ABOUT STUB
 		''')
-		.replace('\n', ' ')
-		.strip(' \t\n\r')
 	)
 
 
@@ -142,8 +136,8 @@ class Message:
 
 		return (
 			({
-				'en': Message.about_en,
-				'ru': Message.about_ru,
+				'en': Answer.about_en,
+				'ru': Answer.about_ru,
 			})
-			[Message.reduce_language_code(language_code)]
+			[Answer.reduce_language_code(language_code)]
 		)
