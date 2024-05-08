@@ -24,7 +24,8 @@ class Application:
 
 		self.__application: typing.Optional[ApplicationType] = None
 
-		self.__bot = Bot()
+		self.__whitelist_usernames: typing.Optional[set[str]] = None
+		self.__bot: typing.Optional[Bot] = None
 
 
 	def run(self,) -> None:
@@ -36,7 +37,7 @@ class Application:
 
 		self.__logger.info('run begin')
 
-		# TODO run webhook option
+		# TODO run webhook option, though duplicate messages might arrive
 
 		self.__application.run_polling()
 
@@ -59,6 +60,26 @@ class Application:
 
 		self.__logger.info('token read')
 
+		with (
+				open(
+					'config/.stash/whitelist.json',
+					mode='rt',
+					encoding='utf8',
+				)
+			) as file_obj:
+
+			self.__whitelist_usernames = set(json.load(file_obj)['users'])
+
+		self.__logger.info('whitelist read')
+
+		self.__bot = (
+			Bot(
+				whitelist_usernames=self.__whitelist_usernames,
+			)
+		)
+
+		# TODO implement persistence
+
 		self.__application = (
 			telegram.ext.ApplicationBuilder()
 			.token(telegram_token)
@@ -78,6 +99,8 @@ class Application:
 
 		self.__logger.info('initialize begin')
 
+		assert self.__whitelist_usernames is not None
+		assert self.__bot is not None
 		assert application.bot is not None
 
 		await application.bot.set_my_commands(
@@ -111,30 +134,53 @@ class Application:
 
 		self.__logger.info('bot description set')
 
+		application.add_error_handler(self.__handle_error)
+
+		chat_whitelist_usernames_filter = telegram.ext.filters.Chat()
+		chat_whitelist_usernames_filter.add_usernames(self.__whitelist_usernames)
+
 		for command in Command.command_sequence(None):
 
 			application.add_handler(
 				telegram.ext.CommandHandler(
 					command=command.command,
+					filters=(
+						telegram.ext.filters.COMMAND
+						& telegram.ext.filters.USER
+						& telegram.ext.filters.CHAT
+						& (~telegram.ext.filters.VIA_BOT)
+						& chat_whitelist_usernames_filter
+					),
 					callback=functools.partial(self.__bot.handle_command, command,),
 					block=False,
+					has_args=False,
 				)
 			)
 
 		application.add_handler(
 			telegram.ext.MessageHandler(
-				filters=(telegram.ext.filters.TEXT & (~telegram.ext.filters.COMMAND)),
+				filters=(
+					telegram.ext.filters.TEXT
+					& (~telegram.ext.filters.COMMAND)
+					& telegram.ext.filters.USER
+					& telegram.ext.filters.CHAT
+					& (~telegram.ext.filters.VIA_BOT)
+						& chat_whitelist_usernames_filter
+				),
 				callback=self.__bot.handle_translation,
 				block=False,
 			)
 		)
 
-		application.add_handler(
-			telegram.ext.MessageHandler(
-				filters=telegram.ext.filters.COMMAND,
-				callback=functools.partial(self.__bot.handle_command, None,),
-				block=False,
-			)
-		)
-
 		self.__logger.info('initialize end')
+
+
+	async def __handle_error(
+			self,
+			_: typing.Any,
+			context: telegram.ext.ContextTypes.DEFAULT_TYPE,
+		) -> None:
+
+		# TODO send message to admin
+
+		self.__logger.exception('application error: %s', context.error, exc_info=True,)
