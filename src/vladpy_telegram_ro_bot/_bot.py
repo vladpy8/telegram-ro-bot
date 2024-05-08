@@ -5,7 +5,6 @@ import telegram
 import telegram.ext
 import telegram.error
 
-from vladpy_telegram_ro_bot._types import BotType
 from vladpy_telegram_ro_bot.constants._command import Command
 from vladpy_telegram_ro_bot.constants._answer import Answer
 
@@ -29,7 +28,7 @@ class Bot:
 			self,
 			command: typing.Optional[telegram.BotCommand],
 			update: telegram.Update,
-			context: telegram.ext.ContextTypes.DEFAULT_TYPE,
+			_: telegram.ext.ContextTypes.DEFAULT_TYPE,
 		) -> None:
 
 		self.__logger.info('command handle begin [%s]', update.update_id)
@@ -46,8 +45,14 @@ class Bot:
 			self.__logger.info('command handle end [%s], user is bot', update.update_id)
 			return
 
-		if (update.effective_user.username not in self.__whitelist_usernames):
+		if update.effective_user.username not in self.__whitelist_usernames:
 			self.__logger.info('command handle end [%s], user is not in whitelist', update.update_id)
+			return
+
+		message = update.message or update.edited_message
+
+		if message is None:
+			self.__logger.info('command handle end [%s], no message', update.update_id)
 			return
 
 		language_code = update.effective_user.language_code
@@ -57,10 +62,9 @@ class Bot:
 			self.__logger.info('command handle "hello" [%s]', update.update_id)
 
 			await (
-				self.__send_message_safe(
-					bot=context.bot,
+				self.__reply_message(
 					update_id=update.update_id,
-					chat_id=update.effective_chat.id,
+					message=message,
 					text=Answer.hello(language_code),
 				)
 			)
@@ -70,10 +74,9 @@ class Bot:
 			self.__logger.info('command handle "help" [%s]', update.update_id)
 
 			await (
-				self.__send_message_safe(
-					bot=context.bot,
+				self.__reply_message(
 					update_id=update.update_id,
-					chat_id=update.effective_chat.id,
+					message=message,
 					text=Answer.help(language_code),
 				)
 			)
@@ -83,10 +86,9 @@ class Bot:
 			self.__logger.info('command handle "about" [%s]', update.update_id)
 
 			await (
-				self.__send_message_safe(
-					bot=context.bot,
+				self.__reply_message(
 					update_id=update.update_id,
-					chat_id=update.effective_chat.id,
+					message=message,
 					text=Answer.about(language_code),
 				)
 			)
@@ -96,10 +98,9 @@ class Bot:
 			self.__logger.warning('command handle "unknown" [%s] "%s"', command, update.update_id)
 
 			await (
-				self.__send_message_safe(
-					bot=context.bot,
+				self.__reply_message(
 					update_id=update.update_id,
-					chat_id=update.effective_chat.id,
+					message=message,
 					text=Answer.unknown(language_code),
 				)
 			)
@@ -110,7 +111,7 @@ class Bot:
 	async def handle_translation(
 			self,
 			update: telegram.Update,
-			context: telegram.ext.ContextTypes.DEFAULT_TYPE
+			_: telegram.ext.ContextTypes.DEFAULT_TYPE,
 		) -> None:
 
 		self.__logger.info('translation handle begin [%s]', update.update_id)
@@ -127,9 +128,17 @@ class Bot:
 			self.__logger.info('translation handle end [%s], user bot', update.update_id)
 			return
 
-		if (update.effective_user.username not in self.__whitelist_usernames):
+		if update.effective_user.username not in self.__whitelist_usernames:
 			self.__logger.info('translation handle end [%s], user not in whitelist', update.update_id)
 			return
+
+		message = update.message or update.edited_message
+
+		if message is None:
+			self.__logger.info('translation handle end [%s], no message', update.update_id)
+			return
+
+		# TODO entities
 
 		text = None
 
@@ -157,10 +166,9 @@ class Bot:
 			return
 
 		await (
-			self.__send_message_safe(
-				bot=context.bot,
+			self.__reply_message(
 				update_id=update.update_id,
-				chat_id=update.effective_chat.id,
+				message=message,
 				text=text,
 			)
 		)
@@ -168,20 +176,19 @@ class Bot:
 		self.__logger.info('translation handle end [%s]', update.update_id)
 
 
-	async def __send_message_safe(
+	async def __reply_message(
 			self,
-			bot: BotType,
 			update_id: int,
-			chat_id: int,
+			message: telegram.Message,
 			text: str,
 		) -> None:
 
 		try:
 
 			await (
-				bot.send_message(
-					chat_id=chat_id,
+				message.reply_text(
 					text=text,
+					do_quote=message.build_reply_arguments(),
 				)
 			)
 
