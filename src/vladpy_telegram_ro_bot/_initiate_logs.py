@@ -16,6 +16,8 @@ def initiate_logs(
 
 	file_path_loc = file_path or 'logs/vladpy_telegram_ro_bot.log'
 
+	# TODO create file when absent
+
 	if stream_f:
 		logger.addHandler(logging.StreamHandler(stream=sys.stdout,))
 

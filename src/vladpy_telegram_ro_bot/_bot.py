@@ -4,6 +4,7 @@ import logging
 import telegram
 import telegram.ext
 import telegram.error
+import telegram.constants
 
 from vladpy_telegram_ro_bot.constants._command import Command
 from vladpy_telegram_ro_bot.constants._answer import Answer
@@ -28,7 +29,7 @@ class Bot:
 			self,
 			command: typing.Optional[telegram.BotCommand],
 			update: telegram.Update,
-			_: telegram.ext.ContextTypes.DEFAULT_TYPE,
+			context: telegram.ext.ContextTypes.DEFAULT_TYPE,
 		) -> None:
 
 		self.__logger.info('command handle begin [%s]', update.update_id)
@@ -63,8 +64,10 @@ class Bot:
 
 			await (
 				self.__reply_message(
+					context=context,
+					chat_id=update.effective_chat.id,
 					update_id=update.update_id,
-					message=message,
+					message_id=message.id,
 					text=Answer.hello(language_code),
 				)
 			)
@@ -75,8 +78,10 @@ class Bot:
 
 			await (
 				self.__reply_message(
+					context=context,
+					chat_id=update.effective_chat.id,
 					update_id=update.update_id,
-					message=message,
+					message_id=message.id,
 					text=Answer.help(language_code),
 				)
 			)
@@ -87,8 +92,10 @@ class Bot:
 
 			await (
 				self.__reply_message(
+					context=context,
+					chat_id=update.effective_chat.id,
 					update_id=update.update_id,
-					message=message,
+					message_id=message.id,
 					text=Answer.about(language_code),
 				)
 			)
@@ -99,8 +106,10 @@ class Bot:
 
 			await (
 				self.__reply_message(
+					context=context,
+					chat_id=update.effective_chat.id,
 					update_id=update.update_id,
-					message=message,
+					message_id=message.id,
 					text=Answer.unknown(language_code),
 				)
 			)
@@ -111,7 +120,7 @@ class Bot:
 	async def handle_translation(
 			self,
 			update: telegram.Update,
-			_: telegram.ext.ContextTypes.DEFAULT_TYPE,
+			context: telegram.ext.ContextTypes.DEFAULT_TYPE,
 		) -> None:
 
 		self.__logger.info('translation handle begin [%s]', update.update_id)
@@ -138,39 +147,38 @@ class Bot:
 			self.__logger.warning('translation handle end [%s], no message', update.update_id)
 			return
 
-		# TODO fast response in case of latency
-		# TODO entities
+		translate_entities_map: dict[telegram.MessageEntity, str] = (
+			message.parse_entities(types=[
+				telegram.constants.MessageEntityType.BLOCKQUOTE,
+				telegram.constants.MessageEntityType.BOLD,
+				telegram.constants.MessageEntityType.ITALIC,
+				telegram.constants.MessageEntityType.SPOILER,
+				telegram.constants.MessageEntityType.STRIKETHROUGH,
+				telegram.constants.MessageEntityType.TEXT_LINK,
+				telegram.constants.MessageEntityType.UNDERLINE,
+			])
+		)
 
-		text = None
+		translate_entities_map = {
+			entity: text for (entity, text) in translate_entities_map.items()
+			if len(text) > 0
+		}
 
-		if (
-				update.edited_message is not None
-				and update.edited_message.text is not None
-				and (
-					update.message is None
-					or update.message.text is None
-					or update.message.text != update.edited_message.text
-				)
-			):
-
-			text = update.edited_message.text
-
-		elif (
-				update.message is not None
-				and update.message.text is not None
-			):
-
-			text = update.message.text
-
-		if text is None:
+		if len(translate_entities_map) == 0:
 			self.__logger.info('translation handle end [%s], no text', update.update_id)
 			return
 
+		# TODO autodetect language
+		# TODO fast response in case of latency
+		# TODO quote reply
+
 		await (
 			self.__reply_message(
+				context=context,
+				chat_id=update.effective_chat.id,
 				update_id=update.update_id,
-				message=message,
-				text=text,
+				message_id=message.id,
+				text='Перевод',
 			)
 		)
 
@@ -179,17 +187,24 @@ class Bot:
 
 	async def __reply_message(
 			self,
+			context: telegram.ext.ContextTypes.DEFAULT_TYPE,
+			chat_id: int,
 			update_id: int,
-			message: telegram.Message,
+			message_id: int,
 			text: str,
 		) -> None:
 
 		try:
 
 			await (
-				message.reply_text(
+				context.bot.send_message(
+					chat_id=chat_id,
+					reply_parameters=(
+						telegram.ReplyParameters(
+							message_id=message_id,
+						)
+					),
 					text=text,
-					do_quote=message.build_reply_arguments(),
 				)
 			)
 
