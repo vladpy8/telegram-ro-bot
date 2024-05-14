@@ -34,25 +34,25 @@ class Bot:
 		self.__logger.info('command handle begin [%s]', update.update_id)
 
 		if update.effective_chat is None:
-			self.__logger.info('command handle end [%s], no chat', update.update_id)
+			self.__logger.warning('command handle end [%s], no chat', update.update_id)
 			return
 
 		if update.effective_user is None:
-			self.__logger.info('command handle end [%s], no user', update.update_id)
+			self.__logger.warning('command handle end [%s], no user', update.update_id)
 			return
 
 		if update.effective_user.is_bot:
-			self.__logger.info('command handle end [%s], user is bot', update.update_id)
+			self.__logger.warning('command handle end [%s], user is bot', update.update_id)
 			return
 
 		if update.effective_user.username not in self.__whitelist_usernames:
-			self.__logger.info('command handle end [%s], user is not in whitelist', update.update_id)
+			self.__logger.warning('command handle end [%s], user is not in whitelist', update.update_id)
 			return
 
 		message = update.message or update.edited_message
 
 		if message is None:
-			self.__logger.info('command handle end [%s], no message', update.update_id)
+			self.__logger.warning('command handle end [%s], no message', update.update_id)
 			return
 
 		language_code = update.effective_user.language_code
@@ -117,27 +117,28 @@ class Bot:
 		self.__logger.info('translation handle begin [%s]', update.update_id)
 
 		if update.effective_chat is None:
-			self.__logger.info('translation handle end [%s], no chat', update.update_id)
+			self.__logger.warning('translation handle end [%s], no chat', update.update_id)
 			return
 
 		if update.effective_user is None:
-			self.__logger.info('translation handle end [%s], no user', update.update_id)
+			self.__logger.warning('translation handle end [%s], no user', update.update_id)
 			return
 
 		if update.effective_user.is_bot:
-			self.__logger.info('translation handle end [%s], user bot', update.update_id)
+			self.__logger.warning('translation handle end [%s], user bot', update.update_id)
 			return
 
 		if update.effective_user.username not in self.__whitelist_usernames:
-			self.__logger.info('translation handle end [%s], user not in whitelist', update.update_id)
+			self.__logger.warning('translation handle end [%s], user not in whitelist', update.update_id)
 			return
 
 		message = update.message or update.edited_message
 
 		if message is None:
-			self.__logger.info('translation handle end [%s], no message', update.update_id)
+			self.__logger.warning('translation handle end [%s], no message', update.update_id)
 			return
 
+		# TODO fast response in case of latency
 		# TODO entities
 
 		text = None
@@ -193,7 +194,7 @@ class Bot:
 			)
 
 		except telegram.error.Forbidden:
-			self.__logger.warning('message send exception [%s], forbidden', update_id)
+			self.__logger.info('message send exception [%s], forbidden', update_id)
 
 		except:
 			self.__logger.exception('message send exception [%s]', update_id)

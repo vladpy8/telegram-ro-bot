@@ -8,6 +8,7 @@ import telegram.ext
 
 from vladpy_telegram_ro_bot._types import ApplicationType
 from vladpy_telegram_ro_bot._initiate_logs import initiate_logs
+from vladpy_telegram_ro_bot._application_defaults import ApplicationDefaults
 from vladpy_telegram_ro_bot._bot import Bot
 from vladpy_telegram_ro_bot.constants._command import Command
 from vladpy_telegram_ro_bot.constants._answer import Answer
@@ -82,10 +83,18 @@ class Application:
 
 		self.__application = (
 			telegram.ext.ApplicationBuilder()
+			.post_init(self.__initialize_application)
 			.token(telegram_token)
 			.concurrent_updates(True)
 			.rate_limiter(telegram.ext.AIORateLimiter())
-			.post_init(self.__initialize_application)
+			.connect_timeout(ApplicationDefaults.connect_timeout.total_seconds())
+			.pool_timeout(ApplicationDefaults.pool_timeout.total_seconds())
+			.read_timeout(ApplicationDefaults.read_timeout.total_seconds())
+			.write_timeout(ApplicationDefaults.write_timeout.total_seconds())
+			.get_updates_connect_timeout(ApplicationDefaults.get_updates_connect_timeout.total_seconds())
+			.get_updates_pool_timeout(ApplicationDefaults.get_updates_pool_timeout.total_seconds())
+			.get_updates_read_timeout(ApplicationDefaults.get_updates_read_timeout.total_seconds())
+			.get_updates_write_timeout(ApplicationDefaults.get_updates_write_timeout.total_seconds())
 			.build()
 		)
 
@@ -165,7 +174,7 @@ class Application:
 					& telegram.ext.filters.USER
 					& telegram.ext.filters.CHAT
 					& (~telegram.ext.filters.VIA_BOT)
-						& chat_whitelist_usernames_filter
+					& chat_whitelist_usernames_filter
 				),
 				callback=self.__bot.handle_translation,
 				block=False,
