@@ -8,6 +8,7 @@ import telegram.constants
 
 from vladpy_telegram_ro_bot.constants._command import Command
 from vladpy_telegram_ro_bot.constants._answer import Answer
+from vladpy_telegram_ro_bot._translator import Translator
 
 
 class Bot:
@@ -23,6 +24,8 @@ class Bot:
 		self.__logger.info('init')
 
 		self.__whitelist_usernames = whitelist_usernames
+
+		self.__translator = Translator()
 
 
 	async def handle_command(
@@ -147,30 +150,24 @@ class Bot:
 			self.__logger.warning('translation handle end [%s], no message', update.update_id)
 			return
 
-		translate_entities_map: dict[telegram.MessageEntity, str] = (
-			message.parse_entities(types=[
-				telegram.constants.MessageEntityType.BLOCKQUOTE,
-				telegram.constants.MessageEntityType.BOLD,
-				telegram.constants.MessageEntityType.ITALIC,
-				telegram.constants.MessageEntityType.SPOILER,
-				telegram.constants.MessageEntityType.STRIKETHROUGH,
-				telegram.constants.MessageEntityType.TEXT_LINK,
-				telegram.constants.MessageEntityType.UNDERLINE,
-			])
-		)
-
-		translate_entities_map = {
-			entity: text for (entity, text) in translate_entities_map.items()
-			if len(text) > 0
-		}
-
-		if len(translate_entities_map) == 0:
-			self.__logger.info('translation handle end [%s], no text', update.update_id)
+		if message.text is None:
+			self.__logger.warning('translation handle end [%s], no text', update.update_id)
 			return
 
 		# TODO autodetect language
 		# TODO fast response in case of latency
 		# TODO quote reply
+
+		translation = (
+			self.__translator.translate(
+				update_id=update.update_id,
+				message=message,
+			)
+		)
+
+		if translation is None:
+			self.__logger.info('translation handle end [%s], no translation', update.update_id)
+			return
 
 		await (
 			self.__reply_message(
@@ -178,7 +175,7 @@ class Bot:
 				chat_id=update.effective_chat.id,
 				update_id=update.update_id,
 				message_id=message.id,
-				text='Перевод',
+				text=translation,
 			)
 		)
 

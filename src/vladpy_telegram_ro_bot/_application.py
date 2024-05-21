@@ -191,5 +191,6 @@ class Application:
 		) -> None:
 
 		# TODO send message to admin
+		# TODO consider stopping app
 
 		self.__logger.exception('application error: %s', context.error, exc_info=True,)
