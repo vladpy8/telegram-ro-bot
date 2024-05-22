@@ -38,7 +38,7 @@ class Application:
 
 		self.__logger.info('run begin')
 
-		# TODO run webhook option, though duplicate messages might arrive
+		# TODO design: webhook (duplicate messages might arrive)
 
 		self.__application.run_polling()
 
@@ -79,7 +79,7 @@ class Application:
 			)
 		)
 
-		# TODO implement persistence
+		# TODO improve: persistence
 
 		self.__application = (
 			telegram.ext.ApplicationBuilder()
@@ -169,7 +169,10 @@ class Application:
 		application.add_handler(
 			telegram.ext.MessageHandler(
 				filters=(
-					telegram.ext.filters.TEXT
+					(
+						telegram.ext.filters.TEXT
+						| telegram.ext.filters.CAPTION
+					)
 					& (~telegram.ext.filters.COMMAND)
 					& telegram.ext.filters.USER
 					& telegram.ext.filters.CHAT
@@ -190,7 +193,7 @@ class Application:
 			context: telegram.ext.ContextTypes.DEFAULT_TYPE,
 		) -> None:
 
-		# TODO send message to admin
-		# TODO consider stopping app
+		# TODO improve: message to admin
+		# TODO fix: stop app
 
 		self.__logger.exception('application error: %s', context.error, exc_info=True,)

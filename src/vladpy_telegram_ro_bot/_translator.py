@@ -3,18 +3,29 @@ import logging
 import re
 
 import telegram
+import telegram.helpers
 import langdetect # type: ignore
 #import google.cloud.translate
+
+
+langdetect.DetectorFactory.seed = 0
 
 
 class Translator:
 
 
-	def __init__(self,) -> None:
+	def __init__(
+			self,
+			debug_mode_f: bool = True,
+		) -> None:
 
 		self.__logger = logging.getLogger('vladpy_telegram_ro_bot.Translator')
 
 		self.__logger.info('init')
+
+		self.__debug_mode_f = debug_mode_f
+
+		# TODO fix quote handling
 
 		self.__regex_obj = (
 			re.compile(
@@ -23,9 +34,23 @@ class Translator:
 			)
 		)
 
-		langdetect.DetectorFactory.seed = 0
-
 		#self.__gtranslate_client = google.cloud.translate.TranslationServiceClient()
+
+		if self.__debug_mode_f:
+			self.__logger.info('debug mode set')
+
+
+	def set_debug_mode(
+			self,
+			debug_mode_f: bool,
+		) -> None:
+
+		self.__debug_mode_f = debug_mode_f
+
+		if self.__debug_mode_f:
+			self.__logger.info('debug mode set')
+		else:
+			self.__logger.info('debug mode unset')
 
 
 	def translate(
@@ -34,11 +59,11 @@ class Translator:
 			message: telegram.Message,
 		) -> typing.Optional[str]:
 
-		assert message.text is not None
-
 		self.__logger.info('translate begin [%s]', update_id)
 
 		message_text = message.text
+
+		assert message_text is not None
 
 		message_target_language_detect_f = (
 			self.__detect_target_language(
@@ -47,14 +72,18 @@ class Translator:
 			)
 		)
 
-		if not message_target_language_detect_f:
+		if (
+				not message_target_language_detect_f
+				and not self.__debug_mode_f
+			):
+
 			self.__logger.info('translate end [%s], no target language', update_id)
 			return None
 
 		message_entities_dict: dict[telegram.MessageEntity, str] = message.parse_entities()
 
-		translation_sentences_list = (
-			self.__parse_translation_sentences(
+		message_sentences_list = (
+			self.__parse_message_sentences(
 				message_text=message_text,
 				message_entities_dict=message_entities_dict,
 			)
@@ -63,32 +92,62 @@ class Translator:
 		del message_text
 		del message_entities_dict
 
-		if len(translation_sentences_list) == 0:
+		if len(message_sentences_list) == 0:
 			self.__logger.info('translate end [%s], nothing to translate', update_id)
 			return None
 
-		# response = (
-		# 	self.__gtranslate_client.translate_text(
-		# 		request={
-		# 			'parent': 'projects/vladpy-ro-bot/locations/global',
-		# 			'contents': ['Please translate me'],
-		# 			'mime_type': 'text/plain',
-		# 			'source_language_code': 'ro',
-		# 			'target_language_code': 'ru',
-		# 		}
-		# 	)
-		# )
+		if not self.__debug_mode_f:
 
-		return '\n\n\t\n'.join(translation_sentences_list).replace(' ', '_')
+			# response = (
+			# 	self.__gtranslate_client.translate_text(
+			# 		request={
+			# 			'parent': 'projects/vladpy-ro-bot/locations/global',
+			# 			'contents': ['Please translate me'],
+			# 			'mime_type': 'text/plain',
+			# 			'source_language_code': 'ro',
+			# 			'target_language_code': 'ru',
+			# 		}
+			# 	)
+			# )
+
+			translation = ''
+
+		else:
+			translation = (
+				self.__format_sentences_response(
+					message_sentences_list=message_sentences_list,
+					translate_senteces_list=message_sentences_list,
+				)
+			)
+
+		return translation
 
 
-	def __parse_translation_sentences(
+	def __detect_target_language(
+			self,
+			message_text: str,
+			language_code: str,
+			probability_threshold: float = .5,
+		) -> bool:
+
+		return (
+			any((
+				(
+					(message_language.lang == language_code)
+					and (message_language.prob >= probability_threshold)
+				)
+				for message_language in langdetect.detect_langs(message_text) # type: ignore
+			))
+		)
+
+
+	def __parse_message_sentences(
 			self,
 			message_text: str,
 			message_entities_dict: dict[telegram.MessageEntity, str],
 		) -> list[str]:
 
-		translation_sentences_list: list[str] = []
+		message_sentences_list: list[str] = []
 
 		message_begin_index = 0
 		message_end_index = 0
@@ -118,7 +177,7 @@ class Translator:
 					telegram.constants.MessageEntityType.PRE,
 				}:
 
-				translation_sentences_list.extend((
+				message_sentences_list.extend((
 					self.__parse_sentences_from_text_part(
 						text=message_text,
 						text_begin_index=message_begin_index,
@@ -129,7 +188,7 @@ class Translator:
 				message_begin_index = message_entity.offset
 				message_end_index = message_entity.offset + message_entity.length
 
-			translation_sentences_list.extend((
+			message_sentences_list.extend((
 				self.__parse_sentences_from_text_part(
 					text=message_text,
 					text_begin_index=message_begin_index,
@@ -144,7 +203,7 @@ class Translator:
 
 		if message_end_index != message_begin_index:
 
-			translation_sentences_list.extend((
+			message_sentences_list.extend((
 				self.__parse_sentences_from_text_part(
 					text=message_text,
 					text_begin_index=message_begin_index,
@@ -152,7 +211,7 @@ class Translator:
 				)
 			))
 
-		return translation_sentences_list
+		return message_sentences_list
 
 
 	def __parse_sentences_from_text_part(
@@ -177,19 +236,25 @@ class Translator:
 		return sentences
 
 
-	def __detect_target_language(
+	def __format_sentences_response(
 			self,
-			message_text: str,
-			language_code: str,
-			probability_threshold: float = .5,
-		) -> bool:
+			message_sentences_list: list[str],
+			translate_senteces_list: list[str],
+		) -> str:
 
-		return (
-			any((
-				(
-					(message_language.lang == language_code)
-					and (message_language.prob >= probability_threshold)
+		assert len(message_sentences_list) == len(translate_senteces_list)
+
+		translation = (
+			(
+				'>{message_sentence}\n{translation_sentence}\n'
+				.format(
+					message_sentence=telegram.helpers.escape_markdown(message_sentence, version=2,),
+					translation_sentence=telegram.helpers.escape_markdown(translation_sentence, version=2,),
 				)
-				for message_language in langdetect.detect_langs(message_text) # type: ignore
-			))
+			)
+			for (message_sentence, translation_sentence) in zip(message_sentences_list, translate_senteces_list)
 		)
+
+		translation = '\n'.join(translation)
+
+		return translation

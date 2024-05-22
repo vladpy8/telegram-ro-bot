@@ -144,19 +144,23 @@ class Bot:
 			self.__logger.warning('translation handle end [%s], user not in whitelist', update.update_id)
 			return
 
+		if (
+				sum((
+					(update.message is not None),
+					(update.edited_message is not None),
+				))
+				> 1
+			):
+
+			self.__logger.warning('translation handle [%s], message ambiguity', update.update_id)
+
 		message = update.message or update.edited_message
 
 		if message is None:
 			self.__logger.warning('translation handle end [%s], no message', update.update_id)
 			return
 
-		if message.text is None:
-			self.__logger.warning('translation handle end [%s], no text', update.update_id)
-			return
-
-		# TODO autodetect language
-		# TODO fast response in case of latency
-		# TODO quote reply
+		# TODO design: fast response in case of latency
 
 		translation = (
 			self.__translator.translate(
@@ -196,6 +200,7 @@ class Bot:
 			await (
 				context.bot.send_message(
 					chat_id=chat_id,
+					parse_mode=telegram.constants.ParseMode.MARKDOWN_V2,
 					reply_parameters=(
 						telegram.ReplyParameters(
 							message_id=message_id,
