@@ -65,7 +65,7 @@ class Translator:
 		# 	)
 		# )
 
-		return '\n\n\t\n'.join(translation_sentences_list)
+		return '\n\n\t\n'.join(translation_sentences_list).replace(' ', '_')
 
 
 	def __parse_translation_sentences(
@@ -81,23 +81,39 @@ class Translator:
 
 		for (message_entity, _) in message_entities_dict.items():
 
-			if message_begin_index < message_entity.offset:
+			if message_end_index < message_entity.offset:
 				message_end_index = message_entity.offset
 
 			if message_entity.type in {
 					telegram.constants.MessageEntityType.BOLD,
-					telegram.constants.MessageEntityType.ITALIC,
-					telegram.constants.MessageEntityType.STRIKETHROUGH,
-					telegram.constants.MessageEntityType.UNDERLINE,
 					telegram.constants.MessageEntityType.CODE,
-					#telegram.constants.MessageEntityType.BLOCKQUOTE,
-					#telegram.constants.MessageEntityType.TEXT_LINK,
-					#telegram.constants.MessageEntityType.SPOILER,
+					telegram.constants.MessageEntityType.ITALIC,
+					telegram.constants.MessageEntityType.SPOILER,
+					telegram.constants.MessageEntityType.STRIKETHROUGH,
+					telegram.constants.MessageEntityType.TEXT_LINK,
+					telegram.constants.MessageEntityType.TEXT_MENTION,
+					telegram.constants.MessageEntityType.UNDERLINE,
 				}:
 
 				message_end_index = message_entity.offset + message_entity.length
 
 				continue
+
+			if message_entity.type in {
+					telegram.constants.MessageEntityType.BLOCKQUOTE,
+					telegram.constants.MessageEntityType.PRE,
+				}:
+
+				translation_sentences_list.extend((
+					self.__parse_sentences_from_text_part(
+						text=message_text,
+						text_begin_index=message_begin_index,
+						text_end_index=message_end_index,
+					)
+				))
+
+				message_begin_index = message_entity.offset
+				message_end_index = message_entity.offset + message_entity.length
 
 			translation_sentences_list.extend((
 				self.__parse_sentences_from_text_part(
@@ -132,10 +148,16 @@ class Translator:
 			text_end_index: int,
 		) -> list[str]:
 
-		return (
-			self.__regex_obj.findall(
-				string=text,
-				pos=text_begin_index,
-				endpos=text_end_index,
+		sentences = (
+			match.group(1).rstrip('\n\t ') for match in (
+				self.__regex_obj.finditer(
+					string=text,
+					pos=text_begin_index,
+					endpos=text_end_index,
+				)
 			)
 		)
+
+		sentences = [sentence for sentence in sentences if len(sentence) > 0]
+
+		return sentences
