@@ -61,9 +61,21 @@ class Translator:
 
 		self.__logger.info('translate begin [%s]', update_id)
 
-		message_text = message.text
+		if (
+				sum((
+					(message.text is not None and len(message.text) > 0),
+					(message.caption is not None and len(message.caption) > 0),
+				))
+				> 1
+			):
 
-		assert message_text is not None
+			self.__logger.warning('translate [%s], text ambiguity', update_id)
+
+		message_text = message.text or message.caption
+
+		if message_text is None:
+			self.__logger.warning('translate [%s], no text', update_id)
+			return None
 
 		message_target_language_detect_f = (
 			self.__detect_target_language(
@@ -80,7 +92,13 @@ class Translator:
 			self.__logger.info('translate end [%s], no target language', update_id)
 			return None
 
-		message_entities_dict: dict[telegram.MessageEntity, str] = message.parse_entities()
+		message_entities_dict: dict[telegram.MessageEntity, str] = dict()
+
+		if message.text is not None and len(message.text) > 0:
+			message_entities_dict = message.parse_entities()
+
+		elif message.caption is not None and len(message.caption) > 0:
+			message_entities_dict = message.parse_caption_entities()
 
 		message_sentences_list = (
 			self.__parse_message_sentences(
@@ -89,6 +107,7 @@ class Translator:
 			)
 		)
 
+		del message
 		del message_text
 		del message_entities_dict
 
