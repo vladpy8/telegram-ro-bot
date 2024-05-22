@@ -3,8 +3,8 @@ import logging
 import re
 
 import telegram
-import langdetect
-import google.cloud.translate
+import langdetect # type: ignore
+#import google.cloud.translate
 
 
 class Translator:
@@ -23,6 +23,8 @@ class Translator:
 			)
 		)
 
+		langdetect.DetectorFactory.seed = 0
+
 		#self.__gtranslate_client = google.cloud.translate.TranslationServiceClient()
 
 
@@ -37,6 +39,18 @@ class Translator:
 		self.__logger.info('translate begin [%s]', update_id)
 
 		message_text = message.text
+
+		message_target_language_detect_f = (
+			self.__detect_target_language(
+				message_text=message_text,
+				language_code='ro',
+			)
+		)
+
+		if not message_target_language_detect_f:
+			self.__logger.info('translate end [%s], no target language', update_id)
+			return None
+
 		message_entities_dict: dict[telegram.MessageEntity, str] = message.parse_entities()
 
 		translation_sentences_list = (
@@ -161,3 +175,21 @@ class Translator:
 		sentences = [sentence for sentence in sentences if len(sentence) > 0]
 
 		return sentences
+
+
+	def __detect_target_language(
+			self,
+			message_text: str,
+			language_code: str,
+			probability_threshold: float = .5,
+		) -> bool:
+
+		return (
+			any((
+				(
+					(message_language.lang == language_code)
+					and (message_language.prob >= probability_threshold)
+				)
+				for message_language in langdetect.detect_langs(message_text) # type: ignore
+			))
+		)
