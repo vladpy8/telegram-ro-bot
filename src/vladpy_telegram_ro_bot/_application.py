@@ -164,8 +164,8 @@ class Application:
 
 		application.add_error_handler(self.__handle_error)
 
-		chat_whitelist_usernames_filter = telegram.ext.filters.Chat()
-		chat_whitelist_usernames_filter.add_usernames(self.__bot_config.users_whitelist)
+		usernames_whitelist_filter = telegram.ext.filters.User()
+		usernames_whitelist_filter.add_usernames(self.__bot_config.usernames_whitelist)
 
 		for command in Command.command_sequence(None):
 
@@ -177,7 +177,7 @@ class Application:
 						& telegram.ext.filters.USER
 						& telegram.ext.filters.CHAT
 						& (~telegram.ext.filters.VIA_BOT)
-						& chat_whitelist_usernames_filter
+						& usernames_whitelist_filter
 					),
 					callback=functools.partial(self.__bot.handle_command, command,),
 					block=False,
@@ -196,7 +196,7 @@ class Application:
 					& telegram.ext.filters.USER
 					& telegram.ext.filters.CHAT
 					& (~telegram.ext.filters.VIA_BOT)
-					& chat_whitelist_usernames_filter
+					& usernames_whitelist_filter
 				),
 				callback=self.__bot.handle_translation,
 				block=False,

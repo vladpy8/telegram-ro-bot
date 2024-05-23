@@ -9,8 +9,8 @@ class BotConfig:
 
 	gcloud_project_url: str
 
-	users_admin: tuple[str, ...]
-	users_whitelist: tuple[str, ...]
+	usernames_admin: tuple[str, ...]
+	usernames_whitelist: tuple[str, ...]
 
 	use_langdetect_f: bool = False
 	use_gcloud_f: bool = False

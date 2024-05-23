@@ -32,11 +32,15 @@ class Command:
 	@staticmethod
 	def process_text(text: str,) -> str:
 
-		return (
+		text = (
 			dedent(text)
 			.replace('\n', ' ')
 			.strip(' \t\n\r')
 		)
+
+		text = telegram.helpers.escape_markdown(text=text, version=2,)
+
+		return text
 
 
 	hello_en: telegram.BotCommand = (

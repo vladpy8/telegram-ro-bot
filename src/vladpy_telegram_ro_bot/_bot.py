@@ -56,7 +56,7 @@ class Bot:
 			self.__logger.warning('command handle end [%s], user is bot', update.update_id)
 			return
 
-		if update.effective_user.username not in self.__config.users_whitelist:
+		if update.effective_user.username not in self.__config.usernames_whitelist:
 			self.__logger.warning('command handle end [%s], user is not in whitelist', update.update_id)
 			return
 
@@ -147,7 +147,7 @@ class Bot:
 			self.__logger.warning('translation handle end [%s], user bot', update.update_id)
 			return
 
-		if update.effective_user.username not in self.__config.users_whitelist:
+		if update.effective_user.username not in self.__config.usernames_whitelist:
 			self.__logger.warning('translation handle end [%s], user not in whitelist', update.update_id)
 			return
 

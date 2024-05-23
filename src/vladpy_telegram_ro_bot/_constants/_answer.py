@@ -1,6 +1,8 @@
 import typing
 from textwrap import dedent
 
+import telegram.helpers
+
 
 # TODO fix: add Google Translate attribution
 # TODO fix: stubs
@@ -30,11 +32,15 @@ class Answer:
 	@staticmethod
 	def process_text(text: str,) -> str:
 
-		return (
+		text = (
 			dedent(text)
 			.replace('\n', ' ')
 			.strip(' \t\n\r')
 		)
+
+		text = telegram.helpers.escape_markdown(text=text, version=2,)
+
+		return text
 
 
 	hello_en: str = (
