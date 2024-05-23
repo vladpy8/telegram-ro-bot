@@ -12,8 +12,8 @@ class BotConfig:
 	users_admin: tuple[str, ...]
 	users_whitelist: tuple[str, ...]
 
-	use_gcloud_f: bool = False
 	use_langdetect_f: bool = False
+	use_gcloud_f: bool = False
 
 
 @pydantic.dataclasses.dataclass(

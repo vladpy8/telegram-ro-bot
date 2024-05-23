@@ -1,0 +1,15 @@
+{
+	"gcloud_project_url": "",
+
+	"users_admin": [
+		""
+	],
+
+	"users_whitelist": [
+		"",
+		""
+	],
+
+	"use_langdetect_f": false,
+	"use_gcloud_f": false
+}

@@ -3,7 +3,8 @@ import click
 from vladpy_telegram_ro_bot._application import Application
 
 
-# TODO version option
+# TODO fix: version option
+# TODO fix: config path parameters
 
 
 @click.command()

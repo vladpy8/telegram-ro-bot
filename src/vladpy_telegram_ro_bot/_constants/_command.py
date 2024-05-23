@@ -4,6 +4,10 @@ from textwrap import dedent
 import telegram
 
 
+# TODO fix: add Google Translate attribution
+# TODO fix: stubs
+
+
 class Command:
 
 
@@ -44,7 +48,6 @@ class Command:
 		)
 	)
 
-
 	hello_ru: telegram.BotCommand = (
 		telegram.BotCommand(
 			command='hello',
@@ -55,7 +58,6 @@ class Command:
 	)
 
 
-	# TODO
 	help_en: telegram.BotCommand = (
 		telegram.BotCommand(
 			command='help',
@@ -65,8 +67,6 @@ class Command:
 		)
 	)
 
-
-	# TODO
 	help_ru: telegram.BotCommand = (
 		telegram.BotCommand(
 			command='help',
@@ -77,7 +77,6 @@ class Command:
 	)
 
 
-	# TODO
 	about_en: telegram.BotCommand = (
 		telegram.BotCommand(
 			command='about',
@@ -87,8 +86,6 @@ class Command:
 		)
 	)
 
-
-	# TODO
 	about_ru: telegram.BotCommand = (
 		telegram.BotCommand(
 			command='about',

@@ -2,15 +2,22 @@ import typing
 import logging
 import re
 
+
 import telegram
 import telegram.helpers
 import langdetect # type: ignore
 import google.cloud.translate
+import google.api_core
+import google.api_core.retry_async
 
 from vladpy_telegram_ro_bot._config._bot_config import BotConfig
+from vladpy_telegram_ro_bot._gcloud_client_defaults import GCLoudClientDefaults
 
 
 langdetect.DetectorFactory.seed = 0
+
+
+# TODO fix: add Google Translate attribution
 
 
 class Translator:
@@ -19,6 +26,7 @@ class Translator:
 	def __init__(
 			self,
 			config: BotConfig,
+			gcloud_credentials: typing.Any,
 		) -> None:
 
 		self.__logger = logging.getLogger('vladpy_telegram_ro_bot.Translator')
@@ -26,8 +34,8 @@ class Translator:
 		self.__logger.info('init')
 
 		self.__config = config
-		self.__use_gcloud_f = False
 		self.__use_langdetect_f = False
+		self.__use_gcloud_f = False
 
 		# TODO fix: quote handling
 		# TODO fix: \xa0 symbol
@@ -40,23 +48,14 @@ class Translator:
 			)
 		)
 
-		self.__gtranslate_client = google.cloud.translate.TranslationServiceClient()
+		self.__gtranslate_client = (
+			google.cloud.translate.TranslationServiceAsyncClient(
+				credentials=gcloud_credentials,
+			)
+		)
 
-		self.set_use_gcloud_f(self.__config.use_gcloud_f)
 		self.set_use_langdetect_f(self.__config.use_langdetect_f)
-
-
-	def set_use_gcloud_f(
-			self,
-			use_gcloud_f: bool,
-		) -> None:
-
-		self.__use_gcloud_f = use_gcloud_f
-
-		if self.__use_gcloud_f:
-			self.__logger.info('use gcloud flag set')
-		else:
-			self.__logger.info('use gcloud flag unset')
+		self.set_use_gcloud_f(self.__config.use_gcloud_f)
 
 
 	def set_use_langdetect_f(
@@ -72,11 +71,25 @@ class Translator:
 			self.__logger.info('use langdetect flag unset')
 
 
-	def translate(
+	def set_use_gcloud_f(
+			self,
+			use_gcloud_f: bool,
+		) -> None:
+
+		self.__use_gcloud_f = use_gcloud_f
+
+		if self.__use_gcloud_f:
+			self.__logger.info('use gcloud flag set')
+		else:
+			self.__logger.info('use gcloud flag unset')
+
+
+	async def translate(
 			self,
 			update_id: int,
 			message: telegram.Message,
 			language_code: typing.Optional[str],
+			username: str,
 		) -> typing.Optional[str]:
 
 		self.__logger.info('translate begin [%s]', update_id)
@@ -141,19 +154,39 @@ class Translator:
 
 		if self.__use_gcloud_f:
 
-			response = (
+			translate_response = (
+				await
 				self.__gtranslate_client.translate_text(
-					request={
-						'parent': self.__config.gcloud_project_url,
-						'contents': message_sentences_list,
-						'mime_type': 'text/plain',
-						'source_language_code': 'ro',
-						'target_language_code': (language_code or 'en'),
-					}
+					request=google.cloud.translate.TranslateTextRequest(
+						parent=self.__config.gcloud_project_url,
+						mime_type='text/plain',
+						source_language_code='ro',
+						target_language_code=(language_code or 'en'),
+						contents=message_sentences_list,
+						labels={
+							'application': 'vladpy_telegram_ro_bot',
+							'username': username[:GCLoudClientDefaults.label_max_length],
+						},
+					),
+					timeout=GCLoudClientDefaults.request_timeout.total_seconds(),
+					retry=google.api_core.retry_async.AsyncRetry(
+						initial=GCLoudClientDefaults.request_retry_deltay_initial.total_seconds(),
+						multiplier=GCLoudClientDefaults.request_retry_delay_multiplier,
+						timeout=GCLoudClientDefaults.request_retry_timeout.total_seconds(),
+					),
 				)
 			)
 
-			translation = ''
+			translate_senteces_list = [
+				translation_part.translated_text for translation_part in translate_response.translations
+			]
+
+			translation = (
+				self.__format_sentences_response(
+					message_sentences_list=message_sentences_list,
+					translate_senteces_list=translate_senteces_list,
+				)
+			)
 
 		else:
 			translation = (

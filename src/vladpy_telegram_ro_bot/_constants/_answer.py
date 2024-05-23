@@ -2,6 +2,10 @@ import typing
 from textwrap import dedent
 
 
+# TODO fix: add Google Translate attribution
+# TODO fix: stubs
+
+
 class Answer:
 
 
@@ -40,14 +44,12 @@ class Answer:
 		''')
 	)
 
-
 	hello_ru: str = (
 		process_text('''
 			Привет. Это бот переводчик с румынского. Пожалуйста, пришли мне текст на румынском и я его перевду для тебя,
 			предложение за предложением.
 		''')
 	)
-
 
 	@staticmethod
 	def hello(language_code: typing.Optional[str],) -> str:
@@ -67,13 +69,11 @@ class Answer:
 		''')
 	)
 
-
 	unknown_ru: str = (
 		process_text('''
 			Не понимаю тебя
 		''')
 	)
-
 
 	@staticmethod
 	def unknown(language_code: typing.Optional[str],) -> str:
@@ -87,21 +87,17 @@ class Answer:
 		)
 
 
-	# TODO
 	help_en: str = (
 		process_text('''
 			HELP STUB
 		''')
 	)
 
-
-	# TODO
 	help_ru: str = (
 		process_text('''
 			HELP STUB
 		''')
 	)
-
 
 	@staticmethod
 	def help(language_code: typing.Optional[str],) -> str:
@@ -115,21 +111,17 @@ class Answer:
 		)
 
 
-	# TODO
 	about_en: str = (
 		process_text('''
 			ABOUT STUB
 		''')
 	)
 
-
-	# TODO
 	about_ru: str = (
 		process_text('''
 			ABOUT STUB
 		''')
 	)
-
 
 	@staticmethod
 	def about(language_code: typing.Optional[str],) -> str:
@@ -143,21 +135,17 @@ class Answer:
 		)
 
 
-	# TODO
 	description_en: str = (
 		process_text('''
 			DESCRIPTION STUB
 		''')
 	)
 
-
-	# TODO
 	description_ru: str = (
 		process_text('''
 			DESCRIPTION STUB
 		''')
 	)
-
 
 	@staticmethod
 	def description(language_code: typing.Optional[str],) -> str:
@@ -171,21 +159,17 @@ class Answer:
 		)
 
 
-	# TODO
 	short_description_en: str = (
 		process_text('''
 			SHORT DESCRIPTION STUB
 		''')
 	)
 
-
-	# TODO
 	short_description_ru: str = (
 		process_text('''
 			SHORT DESCRIPTION STUB
 		''')
 	)
-
 
 	@staticmethod
 	def short_description(language_code: typing.Optional[str],) -> str:

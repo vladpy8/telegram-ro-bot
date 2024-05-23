@@ -5,6 +5,7 @@ import functools
 import telegram
 import telegram.ext
 import pydantic
+import google.oauth2.service_account # type: ignore
 
 from vladpy_telegram_ro_bot._types import ApplicationType
 from vladpy_telegram_ro_bot._initiate_logs import initiate_logs
@@ -27,6 +28,7 @@ class Application:
 
 		self.__bot_config: typing.Optional[BotConfig] = None
 		self.__telegram_config: typing.Optional[TelegramConfig] = None
+		self.__gcloud_credentials: typing.Optional[google.oauth2.service_account.Credentials] = None
 
 		self.__application: typing.Optional[ApplicationType] = None
 
@@ -81,9 +83,18 @@ class Application:
 
 		self.__logger.info('telegram token read')
 
+		self.__gcloud_credentials = (
+			google.oauth2.service_account.Credentials.from_service_account_file(
+				filename='config/.stash/gcloud.json',
+			)
+		)
+
+		self.__logger.info('gcloud credentials read')
+
 		self.__bot = (
 			Bot(
 				config=self.__bot_config,
+				gcloud_credentials=self.__gcloud_credentials,
 			)
 		)
 

@@ -18,6 +18,7 @@ class Bot:
 	def __init__(
 			self,
 			config: BotConfig,
+			gcloud_credentials: typing.Any,
 		) -> None:
 
 		self.__logger = logging.getLogger('vladpy_telegram_ro_bot.Bot')
@@ -29,6 +30,7 @@ class Bot:
 		self.__translator = (
 			Translator(
 				config=self.__config,
+				gcloud_credentials=gcloud_credentials,
 			)
 		)
 
@@ -167,13 +169,21 @@ class Bot:
 
 		language_code = update.effective_user.language_code
 
+		# TODO fix: better user responses
+
+		if language_code == 'ro':
+			self.__logger.warning('translation handle end [%s], no translation required', update.update_id)
+			return
+
 		# TODO design: fast response in case of latency
+		# TODO fix: handle long texts
 
 		translation = (
-			self.__translator.translate(
+			await self.__translator.translate(
 				update_id=update.update_id,
 				message=message,
 				language_code=language_code,
+				username=update.effective_user.username,
 			)
 		)
 
