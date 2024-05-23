@@ -5,7 +5,9 @@ import re
 import telegram
 import telegram.helpers
 import langdetect # type: ignore
-#import google.cloud.translate
+import google.cloud.translate
+
+from vladpy_telegram_ro_bot._config._bot_config import BotConfig
 
 
 langdetect.DetectorFactory.seed = 0
@@ -16,16 +18,20 @@ class Translator:
 
 	def __init__(
 			self,
-			debug_mode_f: bool = True,
+			config: BotConfig,
 		) -> None:
 
 		self.__logger = logging.getLogger('vladpy_telegram_ro_bot.Translator')
 
 		self.__logger.info('init')
 
-		self.__debug_mode_f = debug_mode_f
+		self.__config = config
+		self.__use_gcloud_f = False
+		self.__use_langdetect_f = False
 
-		# TODO fix quote handling
+		# TODO fix: quote handling
+		# TODO fix: \xa0 symbol
+		# TODO improve: use process pool
 
 		self.__regex_obj = (
 			re.compile(
@@ -34,29 +40,43 @@ class Translator:
 			)
 		)
 
-		#self.__gtranslate_client = google.cloud.translate.TranslationServiceClient()
+		self.__gtranslate_client = google.cloud.translate.TranslationServiceClient()
 
-		if self.__debug_mode_f:
-			self.__logger.info('debug mode set')
+		self.set_use_gcloud_f(self.__config.use_gcloud_f)
+		self.set_use_langdetect_f(self.__config.use_langdetect_f)
 
 
-	def set_debug_mode(
+	def set_use_gcloud_f(
 			self,
-			debug_mode_f: bool,
+			use_gcloud_f: bool,
 		) -> None:
 
-		self.__debug_mode_f = debug_mode_f
+		self.__use_gcloud_f = use_gcloud_f
 
-		if self.__debug_mode_f:
-			self.__logger.info('debug mode set')
+		if self.__use_gcloud_f:
+			self.__logger.info('use gcloud flag set')
 		else:
-			self.__logger.info('debug mode unset')
+			self.__logger.info('use gcloud flag unset')
+
+
+	def set_use_langdetect_f(
+			self,
+			use_langdetect_f: bool,
+		) -> None:
+
+		self.__use_langdetect_f = use_langdetect_f
+
+		if self.__use_langdetect_f:
+			self.__logger.info('use langdetect flag set')
+		else:
+			self.__logger.info('use langdetect flag unset')
 
 
 	def translate(
 			self,
 			update_id: int,
 			message: telegram.Message,
+			language_code: typing.Optional[str],
 		) -> typing.Optional[str]:
 
 		self.__logger.info('translate begin [%s]', update_id)
@@ -74,19 +94,23 @@ class Translator:
 		message_text = message.text or message.caption
 
 		if message_text is None:
-			self.__logger.warning('translate [%s], no text', update_id)
+			self.__logger.warning('translate end [%s], no text', update_id)
 			return None
 
-		message_target_language_detect_f = (
-			self.__detect_target_language(
-				message_text=message_text,
-				language_code='ro',
+		message_target_language_detect_f = False
+
+		if self.__use_langdetect_f:
+
+			message_target_language_detect_f = (
+				self.__detect_target_language(
+					message_text=message_text,
+					language_code='ro',
+				)
 			)
-		)
 
 		if (
 				not message_target_language_detect_f
-				and not self.__debug_mode_f
+				and not self.__use_langdetect_f
 			):
 
 			self.__logger.info('translate end [%s], no target language', update_id)
@@ -115,19 +139,19 @@ class Translator:
 			self.__logger.info('translate end [%s], nothing to translate', update_id)
 			return None
 
-		if not self.__debug_mode_f:
+		if self.__use_gcloud_f:
 
-			# response = (
-			# 	self.__gtranslate_client.translate_text(
-			# 		request={
-			# 			'parent': 'projects/vladpy-ro-bot/locations/global',
-			# 			'contents': ['Please translate me'],
-			# 			'mime_type': 'text/plain',
-			# 			'source_language_code': 'ro',
-			# 			'target_language_code': 'ru',
-			# 		}
-			# 	)
-			# )
+			response = (
+				self.__gtranslate_client.translate_text(
+					request={
+						'parent': self.__config.gcloud_project_url,
+						'contents': message_sentences_list,
+						'mime_type': 'text/plain',
+						'source_language_code': 'ro',
+						'target_language_code': (language_code or 'en'),
+					}
+				)
+			)
 
 			translation = ''
 

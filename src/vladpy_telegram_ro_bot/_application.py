@@ -1,17 +1,19 @@
-import json
 import logging
 import typing
 import functools
 
 import telegram
 import telegram.ext
+import pydantic
 
 from vladpy_telegram_ro_bot._types import ApplicationType
 from vladpy_telegram_ro_bot._initiate_logs import initiate_logs
 from vladpy_telegram_ro_bot._application_defaults import ApplicationDefaults
 from vladpy_telegram_ro_bot._bot import Bot
-from vladpy_telegram_ro_bot.constants._command import Command
-from vladpy_telegram_ro_bot.constants._answer import Answer
+from vladpy_telegram_ro_bot._constants._command import Command
+from vladpy_telegram_ro_bot._constants._answer import Answer
+from vladpy_telegram_ro_bot._config._telegram_config import TelegramConfig, TelegramConfigPydantic
+from vladpy_telegram_ro_bot._config._bot_config import BotConfig, BotConfigPydantic
 
 
 class Application:
@@ -23,9 +25,11 @@ class Application:
 
 		self.__logger.info('init')
 
+		self.__bot_config: typing.Optional[BotConfig] = None
+		self.__telegram_config: typing.Optional[TelegramConfig] = None
+
 		self.__application: typing.Optional[ApplicationType] = None
 
-		self.__whitelist_usernames: typing.Optional[set[str]] = None
 		self.__bot: typing.Optional[Bot] = None
 
 
@@ -51,31 +55,35 @@ class Application:
 
 		with (
 				open(
+					'config/.stash/bot.json',
+					mode='rt',
+					encoding='utf8',
+				)
+			) as file_obj:
+
+			self.__bot_config = (
+				pydantic.TypeAdapter(BotConfigPydantic).validate_json(file_obj.read())
+			)
+
+		self.__logger.info('bot config read')
+
+		with (
+				open(
 					'config/.stash/telegram.json',
 					mode='rt',
 					encoding='utf8',
 				)
 			) as file_obj:
 
-			telegram_token = json.load(file_obj)['token']
+			self.__telegram_config = (
+				pydantic.TypeAdapter(TelegramConfigPydantic).validate_json(file_obj.read())
+			)
 
-		self.__logger.info('token read')
-
-		with (
-				open(
-					'config/.stash/whitelist.json',
-					mode='rt',
-					encoding='utf8',
-				)
-			) as file_obj:
-
-			self.__whitelist_usernames = set(json.load(file_obj)['users'])
-
-		self.__logger.info('whitelist read')
+		self.__logger.info('telegram token read')
 
 		self.__bot = (
 			Bot(
-				whitelist_usernames=self.__whitelist_usernames,
+				config=self.__bot_config,
 			)
 		)
 
@@ -84,7 +92,7 @@ class Application:
 		self.__application = (
 			telegram.ext.ApplicationBuilder()
 			.post_init(self.__initialize_application)
-			.token(telegram_token)
+			.token(self.__telegram_config.token)
 			.concurrent_updates(True)
 			.rate_limiter(telegram.ext.AIORateLimiter())
 			.connect_timeout(ApplicationDefaults.connect_timeout.total_seconds())
@@ -108,7 +116,7 @@ class Application:
 
 		self.__logger.info('initialize begin')
 
-		assert self.__whitelist_usernames is not None
+		assert self.__bot_config is not None
 		assert self.__bot is not None
 		assert application.bot is not None
 
@@ -146,7 +154,7 @@ class Application:
 		application.add_error_handler(self.__handle_error)
 
 		chat_whitelist_usernames_filter = telegram.ext.filters.Chat()
-		chat_whitelist_usernames_filter.add_usernames(self.__whitelist_usernames)
+		chat_whitelist_usernames_filter.add_usernames(self.__bot_config.users_whitelist)
 
 		for command in Command.command_sequence(None):
 

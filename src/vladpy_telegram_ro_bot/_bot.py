@@ -6,9 +6,10 @@ import telegram.ext
 import telegram.error
 import telegram.constants
 
-from vladpy_telegram_ro_bot.constants._command import Command
-from vladpy_telegram_ro_bot.constants._answer import Answer
+from vladpy_telegram_ro_bot._constants._command import Command
+from vladpy_telegram_ro_bot._constants._answer import Answer
 from vladpy_telegram_ro_bot._translator import Translator
+from vladpy_telegram_ro_bot._config._bot_config import BotConfig
 
 
 class Bot:
@@ -16,16 +17,20 @@ class Bot:
 
 	def __init__(
 			self,
-			whitelist_usernames: set[str],
+			config: BotConfig,
 		) -> None:
 
 		self.__logger = logging.getLogger('vladpy_telegram_ro_bot.Bot')
 
 		self.__logger.info('init')
 
-		self.__whitelist_usernames = whitelist_usernames
+		self.__config = config
 
-		self.__translator = Translator()
+		self.__translator = (
+			Translator(
+				config=self.__config,
+			)
+		)
 
 
 	async def handle_command(
@@ -49,7 +54,7 @@ class Bot:
 			self.__logger.warning('command handle end [%s], user is bot', update.update_id)
 			return
 
-		if update.effective_user.username not in self.__whitelist_usernames:
+		if update.effective_user.username not in self.__config.users_whitelist:
 			self.__logger.warning('command handle end [%s], user is not in whitelist', update.update_id)
 			return
 
@@ -140,7 +145,7 @@ class Bot:
 			self.__logger.warning('translation handle end [%s], user bot', update.update_id)
 			return
 
-		if update.effective_user.username not in self.__whitelist_usernames:
+		if update.effective_user.username not in self.__config.users_whitelist:
 			self.__logger.warning('translation handle end [%s], user not in whitelist', update.update_id)
 			return
 
@@ -160,12 +165,15 @@ class Bot:
 			self.__logger.warning('translation handle end [%s], no message', update.update_id)
 			return
 
+		language_code = update.effective_user.language_code
+
 		# TODO design: fast response in case of latency
 
 		translation = (
 			self.__translator.translate(
 				update_id=update.update_id,
 				message=message,
+				language_code=language_code,
 			)
 		)
 
