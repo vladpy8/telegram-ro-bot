@@ -190,3 +190,27 @@ class Reply:
 			})
 			[Reply.reduce_language_code(language_code)]
 		)
+
+
+	quota_reach_en: str = (
+		process_text('''
+			QUOTA LIMIT STUB
+		''')
+	)
+
+	quota_reach_ru: str = (
+		process_text('''
+			QUOTA LIMIT STUB
+		''')
+	)
+
+	@staticmethod
+	def quota_reach(language_code: typing.Optional[str],) -> str:
+
+		return (
+			({
+				'en': Reply.quota_reach_en,
+				'ru': Reply.quota_reach_ru,
+			})
+			[Reply.reduce_language_code(language_code)]
+		)

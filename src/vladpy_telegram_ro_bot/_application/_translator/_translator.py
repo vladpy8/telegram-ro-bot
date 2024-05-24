@@ -7,19 +7,23 @@ import copy
 
 import telegram
 import telegram.helpers
-import langdetect # type: ignore
+
 import google.cloud.translate
 import google.api_core
 import google.api_core.retry_async
+import google.api_core.exceptions
 import google.oauth2.service_account  # type: ignore
 
 from vladpy_telegram_ro_bot._application._translator._translate_result import TranslateResult, TranslateResultCode
 from vladpy_telegram_ro_bot._application._translator._message_sentences_extractor import MessageSentencesExtractor
+from vladpy_telegram_ro_bot._application._translator._translator_utils import (
+	detect_target_language,
+	extract_sentences_from_message,
+	format_translation_reply,
+)
+
 from vladpy_telegram_ro_bot._application._config._bot_config import BotConfig
-from vladpy_telegram_ro_bot._application._defaults._gcloud_client_defaults import GCLoudClientDefaults
-
-
-langdetect.DetectorFactory.seed = 0
+from vladpy_telegram_ro_bot._application._defaults._gcloud_api_defaults import GCLoudApiDefaults
 
 
 # TODO fix: add Google Translate attribution
@@ -105,7 +109,7 @@ class Translator:
 
 		message_text = message.text or message.caption
 
-		if message_text is None:
+		if message_text is None or len(message_text) == 0:
 			self.__logger.warning('translate end [%s], no text', update_id)
 			return TranslateResult(code=TranslateResultCode.NoTranslateText)
 
@@ -118,7 +122,7 @@ class Translator:
 					asyncio.get_event_loop().run_in_executor(
 						self.__background_executor,
 						functools.partial(
-							Translator.__detect_target_language,
+							detect_target_language,
 							message_text=message_text,
 							language_code='ro',
 						),
@@ -141,7 +145,7 @@ class Translator:
 				asyncio.get_event_loop().run_in_executor(
 					self.__background_executor,
 					functools.partial(
-						Translator.__extract_sentences_from_message,
+						extract_sentences_from_message,
 						message_text=message_text,
 						message=message,
 						message_sentences_extractor=copy.deepcopy(self.__message_sentences_extractor),
@@ -161,153 +165,129 @@ class Translator:
 
 		if self.__use_gcloud_f:
 
-			self.__logger.info('translate [%s], gcloud request', update_id)
+			translation_cut_f = False
 
-			translate_sentences_list = (
+			if len(message_sentences_list) > GCLoudApiDefaults.translate_text_contents_max_length:
+
+				self.__logger.info('translate [%s], translation cut', update_id)
+
+				translation_cut_f = True
+				message_sentences_list = (
+					message_sentences_list[:GCLoudApiDefaults.translate_text_contents_max_length]
+				)
+
+			(
+				translation_code,
+				translate_sentences_list,
+			) = (
 				await self.__translate_gcloud(
+					update_id=update_id,
 					username=username,
 					language_code=language_code,
 					message_sentences_list=message_sentences_list,
 				)
 			)
 
-			self.__logger.info('translate [%s], gcloud response', update_id)
+			translation_reply = None
 
-			translation = (
-				await asyncio.wrap_future(
-					asyncio.get_event_loop().run_in_executor(
-						self.__background_executor,
-						functools.partial(
-							Translator.__format_translation_reply,
-							message_sentences_list=message_sentences_list,
-							translate_sentences_list=translate_sentences_list,
-						),
+			if translate_sentences_list is not None:
+
+				translation_reply = (
+					await asyncio.wrap_future(
+						asyncio.get_event_loop().run_in_executor(
+							self.__background_executor,
+							functools.partial(
+								format_translation_reply,
+								message_sentences_list=message_sentences_list,
+								translate_sentences_list=translate_sentences_list,
+								translation_cut_f=translation_cut_f,
+							),
+						)
 					)
 				)
-			)
 
 		else:
 
-			self.__logger.info('translate [%s], dummy translation', update_id)
+			translation_code = TranslateResultCode.Success
 
-			translation = (
+			translation_reply = (
 				await asyncio.wrap_future(
 					asyncio.get_event_loop().run_in_executor(
 						self.__background_executor,
 						functools.partial(
-							Translator.__format_translation_reply,
+							format_translation_reply,
 							message_sentences_list=message_sentences_list,
 							translate_sentences_list=message_sentences_list,
+							translation_cut_f=False,
 						),
 					)
 				)
 			)
 
+			self.__logger.info('translate [%s], dummy translation', update_id)
+
 		self.__logger.info('translate end [%s], success', update_id)
 
-		return TranslateResult(code=TranslateResultCode.Success, translation=translation,)
-
-
-	@staticmethod
-	def __detect_target_language(
-			message_text: str,
-			language_code: str,
-			probability_threshold: float = .5,
-		) -> bool:
-
-		return (
-			any((
-				(
-					(message_language.lang == language_code)
-					and (message_language.prob >= probability_threshold)
-				)
-				for message_language in langdetect.detect_langs(message_text) # type: ignore
-			))
-		)
-
-
-	@staticmethod
-	def __extract_sentences_from_message(
-			message_text: str,
-			message: telegram.Message,
-			message_sentences_extractor: MessageSentencesExtractor,
-		) -> list[str]:
-
-		message_entities_dict: dict[telegram.MessageEntity, str] = dict()
-
-		if message.text is not None and len(message.text) > 0:
-			message_entities_dict = message.parse_entities()
-
-		elif message.caption is not None and len(message.caption) > 0:
-			message_entities_dict = message.parse_caption_entities()
-
-		message_sentences_list = (
-			message_sentences_extractor.extract(
-				message_text=message_text,
-				message_entities_dict=message_entities_dict,
-			)
-		)
-
-		return message_sentences_list
-
-
-	@staticmethod
-	def __format_translation_reply(
-			message_sentences_list: list[str],
-			translate_sentences_list: list[str],
-		) -> str:
-
-		assert len(message_sentences_list) == len(translate_sentences_list)
-
-		escape_markdown_lambda = functools.partial(telegram.helpers.escape_markdown, version=2,)
-
-		translation = (
-			'\n'.join((
-				f'>{message_sentence}\n{translation_sentence}\n'
-				for (message_sentence, translation_sentence) in (
-					zip(
-						map(escape_markdown_lambda, message_sentences_list),
-						map(escape_markdown_lambda, translate_sentences_list),
-					)
-				)
-			))
-		)
-
-		return translation
+		return TranslateResult(code=translation_code, text=translation_reply,)
 
 
 	async def __translate_gcloud(
 			self,
+			update_id: int,
 			username: str,
 			language_code: typing.Optional[str],
 			message_sentences_list: list[str],
-		) -> list[str]:
+		) -> tuple[TranslateResultCode, typing.Optional[list[str]]]:
 
-		translate_response = (
-			await
-			self.__gtranslate_client.translate_text(
-				request=google.cloud.translate.TranslateTextRequest(
-					parent=self.__config.gcloud_project_url,
-					mime_type='text/plain',
-					source_language_code='ro',
-					target_language_code=(language_code or 'en'),
-					contents=message_sentences_list,
-					labels={
-						'application': 'vladpy_telegram_ro_bot',
-						'username': username[:GCLoudClientDefaults.label_max_length],
-					},
-				),
-				timeout=GCLoudClientDefaults.request_timeout.total_seconds(),
-				retry=google.api_core.retry_async.AsyncRetry(
-					initial=GCLoudClientDefaults.request_retry_deltay_initial.total_seconds(),
-					multiplier=GCLoudClientDefaults.request_retry_delay_multiplier,
-					timeout=GCLoudClientDefaults.request_retry_timeout.total_seconds(),
-				),
+		self.__logger.info('translate gcloud begin [%s]', update_id)
+
+		language_code = language_code or 'en'
+		if language_code == 'ro':
+			language_code = 'en'
+
+		try:
+
+			translate_response = (
+				await
+				self.__gtranslate_client.translate_text(
+					request=google.cloud.translate.TranslateTextRequest(
+						parent=self.__config.gcloud_project_url,
+						mime_type='text/plain',
+						source_language_code='ro',
+						target_language_code=language_code,
+						contents=message_sentences_list,
+						labels={
+							'application': self.__config.gcloud_application_label,
+							'username': username[:GCLoudApiDefaults.label_max_length],
+						},
+					),
+					timeout=GCLoudApiDefaults.request_timeout.total_seconds(),
+					# TODO debug
+					# retry=google.api_core.retry_async.AsyncRetry(
+					# 	initial=GCLoudApiDefaults.request_retry_deltay_initial.total_seconds(),
+					# 	multiplier=GCLoudApiDefaults.request_retry_delay_multiplier,
+					# 	timeout=GCLoudApiDefaults.request_retry_timeout.total_seconds(),
+					# ),
+				)
 			)
-		)
 
-		translate_sentences_list = [
-			translation_part.translated_text for translation_part in translate_response.translations
-		]
+			translate_sentences_list = [
+				translation_part.translated_text for translation_part in translate_response.translations
+			]
 
-		return translate_sentences_list
+		except google.api_core.exceptions.ResourceExhausted:
+
+			self.__logger.warning('translate gcloud exception [%s], quota reach', update_id)
+
+			self.__logger.info('translate gcloud end [%s]', update_id)
+
+			return (TranslateResultCode.QuotaReach, None)
+
+		except:
+
+			self.__logger.exception('translate gcloud exception [%s]', update_id)
+			raise
+
+		self.__logger.info('translate gcloud end [%s]', update_id)
+
+		return (TranslateResultCode.Success, translate_sentences_list)

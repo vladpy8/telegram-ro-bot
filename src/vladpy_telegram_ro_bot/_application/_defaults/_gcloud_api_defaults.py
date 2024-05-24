@@ -1,7 +1,12 @@
 from datetime import timedelta
 
 
-class GCLoudClientDefaults:
+class GCLoudApiDefaults:
+
+
+	# TODO debug
+	translate_text_contents_max_length = 1024
+	translate_text_contents_cut_placeholder = '...'
 
 
 	label_max_length = 63

@@ -9,6 +9,7 @@ import pydantic.dataclasses
 class BotConfig:
 
 	gcloud_project_url: str
+	gcloud_application_label: str
 
 	usernames_admin: tuple[str, ...]
 	usernames_whitelist: typing.Optional[tuple[str, ...]] = None

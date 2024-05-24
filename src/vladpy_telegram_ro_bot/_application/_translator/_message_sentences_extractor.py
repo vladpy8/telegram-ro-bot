@@ -5,6 +5,8 @@ import telegram.helpers
 
 
 # TODO fix: unit tests
+# TODO fix: quote handling
+# TODO fix: \xa0 symbol
 
 
 class MessageSentencesExtractor:
@@ -12,14 +14,9 @@ class MessageSentencesExtractor:
 
 	def __init__(self,) -> None:
 
-		# TODO fix: quote handling
-		# TODO fix: \xa0 symbol
-
 		self.__regex_obj = (
 			re.compile(
-				pattern=('''
-					[\n\t ]*([^[\n\t\\.?!;"]+[\\.?!;]*)
-				'''),
+				pattern=('''[\n\t ]*([^[\n\t\\.?!;"]+[\\.?!;]*)'''),
 				flags=re.MULTILINE,
 			)
 		)

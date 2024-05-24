@@ -10,7 +10,11 @@ import google.oauth2.service_account # type: ignore
 from vladpy_telegram_ro_bot._application._text_invariant._command import Command
 from vladpy_telegram_ro_bot._application._text_invariant._reply import Reply
 from vladpy_telegram_ro_bot._application._translator._translator import Translator
+from vladpy_telegram_ro_bot._application._translator._translate_result import TranslateResultCode
 from vladpy_telegram_ro_bot._application._config._bot_config import BotConfig
+
+
+# TODO improve: fast response in case of latency
 
 
 class Bot:
@@ -183,16 +187,6 @@ class Bot:
 
 		language_code = update.effective_user.language_code
 
-		# TODO fix: better user responses
-		# TODO fix: translate into english in case of ro
-
-		if language_code == 'ro':
-			self.__logger.warning('translation handle end [%s], no translation required', update.update_id)
-			return
-
-		# TODO improve: fast response in case of latency
-		# TODO fix: handle long texts
-
 		translation = (
 			await self.__translator.translate(
 				update_id=update.update_id,
@@ -202,9 +196,26 @@ class Bot:
 			)
 		)
 
-		if translation is None:
+		if translation.code == TranslateResultCode.QuotaReach:
+
+			await (
+				self.__reply_message(
+					context=context,
+					chat_id=update.effective_chat.id,
+					update_id=update.update_id,
+					message_id=message.id,
+					text=Reply.quota_reach(language_code),
+				)
+			)
+
+			self.__logger.info('translation handle end [%s], quota reach', update.update_id)
+			return
+
+		if translation.code != TranslateResultCode.Success:
 			self.__logger.info('translation handle end [%s], no translation', update.update_id)
 			return
+
+		assert translation.text is not None
 
 		await (
 			self.__reply_message(
@@ -212,7 +223,7 @@ class Bot:
 				chat_id=update.effective_chat.id,
 				update_id=update.update_id,
 				message_id=message.id,
-				text=translation,
+				text=translation.text,
 			)
 		)
 

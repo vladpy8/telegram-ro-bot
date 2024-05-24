@@ -4,6 +4,11 @@ import pathlib
 import sys
 
 
+# TODO fix: create file when absent
+# TODO fix: multiple files with archiving
+# TODO improve: use gcloud logging
+
+
 def initiate_logs(
 		stream_f: bool = False,
 		file_f: bool = True,
@@ -15,10 +20,6 @@ def initiate_logs(
 	logger.setLevel(logging.DEBUG)
 
 	file_path_loc = file_path or 'logs/vladpy_telegram_ro_bot.log'
-
-	# TODO fix: create file when absent
-	# TODO fix: multiple files with archiving
-	# TODO improve: use gcloud logging
 
 	if stream_f:
 		logger.addHandler(logging.StreamHandler(stream=sys.stdout,))

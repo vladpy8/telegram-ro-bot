@@ -19,6 +19,11 @@ from vladpy_telegram_ro_bot._application._config._telegram_config import Telegra
 from vladpy_telegram_ro_bot._application._config._bot_config import BotConfig, BotConfigPydantic
 
 
+# TODO improve: message to admin in case of an error
+# TODO improve: webhook (though duplicate messages might arrive)
+# TODO improve: persistence
+
+
 class Application:
 
 
@@ -48,11 +53,7 @@ class Application:
 		assert self.__application is not None
 
 		self.__logger.info('run begin')
-
-		# TODO design: webhook (duplicate messages might arrive)
-
 		self.__application.run_polling()
-
 		self.__logger.info('run end')
 
 
@@ -108,7 +109,7 @@ class Application:
 		assert self.__gcloud_credentials is not None
 
 		self.__background_executor = (
-			concurrent.futures.ProcessPoolExecutor(
+			concurrent.futures.ThreadPoolExecutor(
 				max_workers=1,
 			)
 		)
@@ -120,8 +121,6 @@ class Application:
 				background_executor=self.__background_executor,
 			)
 		)
-
-		# TODO improve: persistence
 
 		self.__application = (
 			telegram.ext.ApplicationBuilder()
@@ -244,16 +243,15 @@ class Application:
 			context: telegram.ext.ContextTypes.DEFAULT_TYPE,
 		) -> None:
 
-		# TODO improve: message to admin
-		# TODO fix: stop app
-
-		self.__logger.exception('application error: %s', context.error, exc_info=True,)
+		self.__logger.exception('application error: %s', context.error)
 
 
 	async def __shutdown_application(
 			self,
 			_: ApplicationType,
 		) -> None:
+
+		# TODO debug
 
 		assert self.__background_executor is not None
 
