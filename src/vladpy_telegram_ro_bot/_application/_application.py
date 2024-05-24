@@ -1,6 +1,7 @@
 import logging
 import typing
 import functools
+import concurrent.futures
 
 import telegram
 import telegram.ext
@@ -34,6 +35,8 @@ class Application:
 		self.__application: typing.Optional[ApplicationType] = None
 
 		self.__bot: typing.Optional[Bot] = None
+
+		self.__background_executor: typing.Optional[concurrent.futures.ProcessPoolExecutor] = None
 
 
 	def run(self,) -> None:
@@ -104,10 +107,17 @@ class Application:
 		assert self.__telegram_config is not None
 		assert self.__gcloud_credentials is not None
 
+		self.__background_executor = (
+			concurrent.futures.ProcessPoolExecutor(
+				max_workers=1,
+			)
+		)
+
 		self.__bot = (
 			Bot(
 				config=self.__bot_config,
 				gcloud_credentials=self.__gcloud_credentials,
+				background_executor=self.__background_executor,
 			)
 		)
 
@@ -116,6 +126,7 @@ class Application:
 		self.__application = (
 			telegram.ext.ApplicationBuilder()
 			.post_init(self.__initialize_application)
+			.post_shutdown(self.__shutdown_application)
 			.token(self.__telegram_config.token)
 			.concurrent_updates(True)
 			.rate_limiter(telegram.ext.AIORateLimiter())
@@ -237,3 +248,13 @@ class Application:
 		# TODO fix: stop app
 
 		self.__logger.exception('application error: %s', context.error, exc_info=True,)
+
+
+	async def __shutdown_application(
+			self,
+			_: ApplicationType,
+		) -> None:
+
+		assert self.__background_executor is not None
+
+		self.__background_executor.shutdown()

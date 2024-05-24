@@ -1,5 +1,9 @@
 import typing
 import logging
+import asyncio
+import concurrent.futures
+import functools
+import copy
 
 import telegram
 import telegram.helpers
@@ -28,6 +32,7 @@ class Translator:
 			self,
 			config: BotConfig,
 			gcloud_credentials: google.oauth2.service_account.Credentials,
+			background_executor: concurrent.futures.Executor,
 		) -> None:
 
 		self.__logger = logging.getLogger('vladpy_telegram_ro_bot.Translator')
@@ -38,9 +43,9 @@ class Translator:
 		self.__use_langdetect_f = False
 		self.__use_gcloud_f = False
 
-		# TODO improve: use process pool
+		self.__background_executor = background_executor
 
-		self.__message_senteces_extractor = MessageSentencesExtractor()
+		self.__message_sentences_extractor = MessageSentencesExtractor()
 
 		self.__gtranslate_client = (
 			google.cloud.translate.TranslationServiceAsyncClient(
@@ -109,9 +114,15 @@ class Translator:
 		if self.__use_langdetect_f:
 
 			message_target_language_detect_f = (
-				self.__detect_target_language(
-					message_text=message_text,
-					language_code='ro',
+				await asyncio.wrap_future(
+					asyncio.get_event_loop().run_in_executor(
+						self.__background_executor,
+						functools.partial(
+							Translator.__detect_target_language,
+							message_text=message_text,
+							language_code='ro',
+						),
+					)
 				)
 			)
 
@@ -121,27 +132,26 @@ class Translator:
 				self.__use_langdetect_f
 				and not message_target_language_detect_f
 			):
+
 			self.__logger.info('translate end [%s], no target language', update_id)
 			return TranslateResult(code=TranslateResultCode.NoTargetLanguage)
 
-		message_entities_dict: dict[telegram.MessageEntity, str] = dict()
-
-		if message.text is not None and len(message.text) > 0:
-			message_entities_dict = message.parse_entities()
-
-		elif message.caption is not None and len(message.caption) > 0:
-			message_entities_dict = message.parse_caption_entities()
-
 		message_sentences_list = (
-			self.__message_senteces_extractor.extract(
-				message_text=message_text,
-				message_entities_dict=message_entities_dict,
+			await asyncio.wrap_future(
+				asyncio.get_event_loop().run_in_executor(
+					self.__background_executor,
+					functools.partial(
+						Translator.__extract_sentences_from_message,
+						message_text=message_text,
+						message=message,
+						message_sentences_extractor=copy.deepcopy(self.__message_sentences_extractor),
+					),
+				)
 			)
 		)
 
-		del message
 		del message_text
-		del message_entities_dict
+		del message
 
 		self.__logger.info('translate [%s], sentences extract', update_id)
 
@@ -153,7 +163,7 @@ class Translator:
 
 			self.__logger.info('translate [%s], gcloud request', update_id)
 
-			translate_senteces_list = (
+			translate_sentences_list = (
 				await self.__translate_gcloud(
 					username=username,
 					language_code=language_code,
@@ -164,9 +174,15 @@ class Translator:
 			self.__logger.info('translate [%s], gcloud response', update_id)
 
 			translation = (
-				self.__format_translation_reply(
-					message_sentences_list=message_sentences_list,
-					translate_senteces_list=translate_senteces_list,
+				await asyncio.wrap_future(
+					asyncio.get_event_loop().run_in_executor(
+						self.__background_executor,
+						functools.partial(
+							Translator.__format_translation_reply,
+							message_sentences_list=message_sentences_list,
+							translate_sentences_list=translate_sentences_list,
+						),
+					)
 				)
 			)
 
@@ -175,9 +191,15 @@ class Translator:
 			self.__logger.info('translate [%s], dummy translation', update_id)
 
 			translation = (
-				self.__format_translation_reply(
-					message_sentences_list=message_sentences_list,
-					translate_senteces_list=message_sentences_list,
+				await asyncio.wrap_future(
+					asyncio.get_event_loop().run_in_executor(
+						self.__background_executor,
+						functools.partial(
+							Translator.__format_translation_reply,
+							message_sentences_list=message_sentences_list,
+							translate_sentences_list=message_sentences_list,
+						),
+					)
 				)
 			)
 
@@ -186,8 +208,8 @@ class Translator:
 		return TranslateResult(code=TranslateResultCode.Success, translation=translation,)
 
 
+	@staticmethod
 	def __detect_target_language(
-			self,
 			message_text: str,
 			language_code: str,
 			probability_threshold: float = .5,
@@ -202,6 +224,56 @@ class Translator:
 				for message_language in langdetect.detect_langs(message_text) # type: ignore
 			))
 		)
+
+
+	@staticmethod
+	def __extract_sentences_from_message(
+			message_text: str,
+			message: telegram.Message,
+			message_sentences_extractor: MessageSentencesExtractor,
+		) -> list[str]:
+
+		message_entities_dict: dict[telegram.MessageEntity, str] = dict()
+
+		if message.text is not None and len(message.text) > 0:
+			message_entities_dict = message.parse_entities()
+
+		elif message.caption is not None and len(message.caption) > 0:
+			message_entities_dict = message.parse_caption_entities()
+
+		message_sentences_list = (
+			message_sentences_extractor.extract(
+				message_text=message_text,
+				message_entities_dict=message_entities_dict,
+			)
+		)
+
+		return message_sentences_list
+
+
+	@staticmethod
+	def __format_translation_reply(
+			message_sentences_list: list[str],
+			translate_sentences_list: list[str],
+		) -> str:
+
+		assert len(message_sentences_list) == len(translate_sentences_list)
+
+		escape_markdown_lambda = functools.partial(telegram.helpers.escape_markdown, version=2,)
+
+		translation = (
+			'\n'.join((
+				f'>{message_sentence}\n{translation_sentence}\n'
+				for (message_sentence, translation_sentence) in (
+					zip(
+						map(escape_markdown_lambda, message_sentences_list),
+						map(escape_markdown_lambda, translate_sentences_list),
+					)
+				)
+			))
+		)
+
+		return translation
 
 
 	async def __translate_gcloud(
@@ -234,32 +306,8 @@ class Translator:
 			)
 		)
 
-		translate_senteces_list = [
+		translate_sentences_list = [
 			translation_part.translated_text for translation_part in translate_response.translations
 		]
 
-		return translate_senteces_list
-
-
-	def __format_translation_reply(
-			self,
-			message_sentences_list: list[str],
-			translate_senteces_list: list[str],
-		) -> str:
-
-		assert len(message_sentences_list) == len(translate_senteces_list)
-
-		translation = (
-			(
-				'>{message_sentence}\n{translation_sentence}\n'
-				.format(
-					message_sentence=telegram.helpers.escape_markdown(message_sentence, version=2,),
-					translation_sentence=telegram.helpers.escape_markdown(translation_sentence, version=2,),
-				)
-			)
-			for (message_sentence, translation_sentence) in zip(message_sentences_list, translate_senteces_list)
-		)
-
-		translation = '\n'.join(translation)
-
-		return translation
+		return translate_sentences_list

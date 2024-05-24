@@ -1,5 +1,6 @@
 import typing
 import logging
+import concurrent.futures
 
 import telegram
 import telegram.ext
@@ -19,6 +20,7 @@ class Bot:
 			self,
 			config: BotConfig,
 			gcloud_credentials: google.oauth2.service_account.Credentials,
+			background_executor: concurrent.futures.Executor,
 		) -> None:
 
 		self.__logger = logging.getLogger('vladpy_telegram_ro_bot.Bot')
@@ -31,6 +33,7 @@ class Bot:
 			Translator(
 				config=self.__config,
 				gcloud_credentials=gcloud_credentials,
+				background_executor=background_executor,
 			)
 		)
 
