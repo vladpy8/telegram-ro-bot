@@ -27,6 +27,7 @@ from vladpy_telegram_ro_bot._application._defaults._gcloud_api_defaults import G
 
 
 # TODO fix: add Google Translate attribution
+# TODO fix: send message to admin in case of quota reach
 
 
 class Translator:
@@ -248,8 +249,7 @@ class Translator:
 		try:
 
 			translate_response = (
-				await
-				self.__gtranslate_client.translate_text(
+				await self.__gtranslate_client.translate_text(
 					request=google.cloud.translate.TranslateTextRequest(
 						parent=self.__config.gcloud_project_url,
 						mime_type='text/plain',
@@ -262,12 +262,6 @@ class Translator:
 						},
 					),
 					timeout=GCLoudApiDefaults.request_timeout.total_seconds(),
-					# TODO debug
-					# retry=google.api_core.retry_async.AsyncRetry(
-					# 	initial=GCLoudApiDefaults.request_retry_deltay_initial.total_seconds(),
-					# 	multiplier=GCLoudApiDefaults.request_retry_delay_multiplier,
-					# 	timeout=GCLoudApiDefaults.request_retry_timeout.total_seconds(),
-					# ),
 				)
 			)
 

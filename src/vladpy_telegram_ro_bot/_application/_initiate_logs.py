@@ -4,6 +4,7 @@ import pathlib
 import sys
 
 
+# TODO fix: multithreaded logging
 # TODO fix: create file when absent
 # TODO fix: multiple files with archiving
 # TODO improve: use gcloud logging

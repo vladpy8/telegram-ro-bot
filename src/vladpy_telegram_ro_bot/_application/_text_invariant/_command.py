@@ -6,6 +6,8 @@ import telegram
 
 # TODO fix: add Google Translate attribution
 # TODO fix: stubs
+# TODO fix: feedback command
+# TODO fix: admin commands
 
 
 class Command:
