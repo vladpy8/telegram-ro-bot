@@ -1,3 +1,4 @@
+import typing
 import dataclasses
 
 import pydantic
@@ -10,7 +11,7 @@ class BotConfig:
 	gcloud_project_url: str
 
 	usernames_admin: tuple[str, ...]
-	usernames_whitelist: tuple[str, ...]
+	usernames_whitelist: typing.Optional[tuple[str, ...]] = None
 
 	use_langdetect_f: bool = False
 	use_gcloud_f: bool = False

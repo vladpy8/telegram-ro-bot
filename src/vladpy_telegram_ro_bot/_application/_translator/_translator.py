@@ -1,6 +1,5 @@
 import typing
 import logging
-import re
 
 
 import telegram
@@ -10,8 +9,9 @@ import google.cloud.translate
 import google.api_core
 import google.api_core.retry_async
 
-from vladpy_telegram_ro_bot._config._bot_config import BotConfig
-from vladpy_telegram_ro_bot._gcloud_client_defaults import GCLoudClientDefaults
+from vladpy_telegram_ro_bot._application._translator._message_sentences_extractor import MessageSentencesExtractor
+from vladpy_telegram_ro_bot._application._config._bot_config import BotConfig
+from vladpy_telegram_ro_bot._application._defaults._gcloud_client_defaults import GCLoudClientDefaults
 
 
 langdetect.DetectorFactory.seed = 0
@@ -37,16 +37,9 @@ class Translator:
 		self.__use_langdetect_f = False
 		self.__use_gcloud_f = False
 
-		# TODO fix: quote handling
-		# TODO fix: \xa0 symbol
 		# TODO improve: use process pool
 
-		self.__regex_obj = (
-			re.compile(
-				pattern='[\n\t ]*([^[\n\t\\.?!;"]+[\\.?!;]*)',
-				flags=re.MULTILINE,
-			)
-		)
+		self.__message_senteces_extractor = MessageSentencesExtractor()
 
 		self.__gtranslate_client = (
 			google.cloud.translate.TranslationServiceAsyncClient(
@@ -138,7 +131,7 @@ class Translator:
 			message_entities_dict = message.parse_caption_entities()
 
 		message_sentences_list = (
-			self.__parse_message_sentences(
+			self.__message_senteces_extractor.extract(
 				message_text=message_text,
 				message_entities_dict=message_entities_dict,
 			)
@@ -154,35 +147,16 @@ class Translator:
 
 		if self.__use_gcloud_f:
 
-			translate_response = (
-				await
-				self.__gtranslate_client.translate_text(
-					request=google.cloud.translate.TranslateTextRequest(
-						parent=self.__config.gcloud_project_url,
-						mime_type='text/plain',
-						source_language_code='ro',
-						target_language_code=(language_code or 'en'),
-						contents=message_sentences_list,
-						labels={
-							'application': 'vladpy_telegram_ro_bot',
-							'username': username[:GCLoudClientDefaults.label_max_length],
-						},
-					),
-					timeout=GCLoudClientDefaults.request_timeout.total_seconds(),
-					retry=google.api_core.retry_async.AsyncRetry(
-						initial=GCLoudClientDefaults.request_retry_deltay_initial.total_seconds(),
-						multiplier=GCLoudClientDefaults.request_retry_delay_multiplier,
-						timeout=GCLoudClientDefaults.request_retry_timeout.total_seconds(),
-					),
+			translate_senteces_list = (
+				await self.__translate_gcloud(
+					username=username,
+					language_code=language_code,
+					message_sentences_list=message_sentences_list,
 				)
 			)
 
-			translate_senteces_list = [
-				translation_part.translated_text for translation_part in translate_response.translations
-			]
-
 			translation = (
-				self.__format_sentences_response(
+				self.__format_translation_reply(
 					message_sentences_list=message_sentences_list,
 					translate_senteces_list=translate_senteces_list,
 				)
@@ -190,13 +164,50 @@ class Translator:
 
 		else:
 			translation = (
-				self.__format_sentences_response(
+				self.__format_translation_reply(
 					message_sentences_list=message_sentences_list,
 					translate_senteces_list=message_sentences_list,
 				)
 			)
 
 		return translation
+
+
+	async def __translate_gcloud(
+			self,
+			username: str,
+			language_code: typing.Optional[str],
+			message_sentences_list: list[str],
+		) -> list[str]:
+
+		translate_response = (
+			await
+			self.__gtranslate_client.translate_text(
+				request=google.cloud.translate.TranslateTextRequest(
+					parent=self.__config.gcloud_project_url,
+					mime_type='text/plain',
+					source_language_code='ro',
+					target_language_code=(language_code or 'en'),
+					contents=message_sentences_list,
+					labels={
+						'application': 'vladpy_telegram_ro_bot',
+						'username': username[:GCLoudClientDefaults.label_max_length],
+					},
+				),
+				timeout=GCLoudClientDefaults.request_timeout.total_seconds(),
+				retry=google.api_core.retry_async.AsyncRetry(
+					initial=GCLoudClientDefaults.request_retry_deltay_initial.total_seconds(),
+					multiplier=GCLoudClientDefaults.request_retry_delay_multiplier,
+					timeout=GCLoudClientDefaults.request_retry_timeout.total_seconds(),
+				),
+			)
+		)
+
+		translate_senteces_list = [
+			translation_part.translated_text for translation_part in translate_response.translations
+		]
+
+		return translate_senteces_list
 
 
 	def __detect_target_language(
@@ -217,102 +228,7 @@ class Translator:
 		)
 
 
-	def __parse_message_sentences(
-			self,
-			message_text: str,
-			message_entities_dict: dict[telegram.MessageEntity, str],
-		) -> list[str]:
-
-		message_sentences_list: list[str] = []
-
-		message_begin_index = 0
-		message_end_index = 0
-
-		for (message_entity, _) in message_entities_dict.items():
-
-			if message_end_index < message_entity.offset:
-				message_end_index = message_entity.offset
-
-			if message_entity.type in {
-					telegram.constants.MessageEntityType.BOLD,
-					telegram.constants.MessageEntityType.CODE,
-					telegram.constants.MessageEntityType.ITALIC,
-					telegram.constants.MessageEntityType.SPOILER,
-					telegram.constants.MessageEntityType.STRIKETHROUGH,
-					telegram.constants.MessageEntityType.TEXT_LINK,
-					telegram.constants.MessageEntityType.TEXT_MENTION,
-					telegram.constants.MessageEntityType.UNDERLINE,
-				}:
-
-				message_end_index = message_entity.offset + message_entity.length
-
-				continue
-
-			if message_entity.type in {
-					telegram.constants.MessageEntityType.BLOCKQUOTE,
-					telegram.constants.MessageEntityType.PRE,
-				}:
-
-				message_sentences_list.extend((
-					self.__parse_sentences_from_text_part(
-						text=message_text,
-						text_begin_index=message_begin_index,
-						text_end_index=message_end_index,
-					)
-				))
-
-				message_begin_index = message_entity.offset
-				message_end_index = message_entity.offset + message_entity.length
-
-			message_sentences_list.extend((
-				self.__parse_sentences_from_text_part(
-					text=message_text,
-					text_begin_index=message_begin_index,
-					text_end_index=message_end_index,
-				)
-			))
-
-			message_end_index = message_entity.offset + message_entity.length
-			message_begin_index = message_end_index
-
-		message_end_index = len(message_text)
-
-		if message_end_index != message_begin_index:
-
-			message_sentences_list.extend((
-				self.__parse_sentences_from_text_part(
-					text=message_text,
-					text_begin_index=message_begin_index,
-					text_end_index=message_end_index,
-				)
-			))
-
-		return message_sentences_list
-
-
-	def __parse_sentences_from_text_part(
-			self,
-			text: str,
-			text_begin_index: int,
-			text_end_index: int,
-		) -> list[str]:
-
-		sentences = (
-			match.group(1).rstrip('\n\t ') for match in (
-				self.__regex_obj.finditer(
-					string=text,
-					pos=text_begin_index,
-					endpos=text_end_index,
-				)
-			)
-		)
-
-		sentences = [sentence for sentence in sentences if len(sentence) > 0]
-
-		return sentences
-
-
-	def __format_sentences_response(
+	def __format_translation_reply(
 			self,
 			message_sentences_list: list[str],
 			translate_senteces_list: list[str],

@@ -7,14 +7,14 @@ import telegram.ext
 import pydantic
 import google.oauth2.service_account # type: ignore
 
-from vladpy_telegram_ro_bot._types import ApplicationType
-from vladpy_telegram_ro_bot._initiate_logs import initiate_logs
-from vladpy_telegram_ro_bot._application_defaults import ApplicationDefaults
-from vladpy_telegram_ro_bot._bot import Bot
-from vladpy_telegram_ro_bot._constants._command import Command
-from vladpy_telegram_ro_bot._constants._answer import Answer
-from vladpy_telegram_ro_bot._config._telegram_config import TelegramConfig, TelegramConfigPydantic
-from vladpy_telegram_ro_bot._config._bot_config import BotConfig, BotConfigPydantic
+from vladpy_telegram_ro_bot._application._types import ApplicationType
+from vladpy_telegram_ro_bot._application._initiate_logs import initiate_logs
+from vladpy_telegram_ro_bot._application._defaults._application_defaults import ApplicationDefaults
+from vladpy_telegram_ro_bot._application._bot import Bot
+from vladpy_telegram_ro_bot._application._text_invariant._command import Command
+from vladpy_telegram_ro_bot._application._text_invariant._reply import Reply
+from vladpy_telegram_ro_bot._application._config._telegram_config import TelegramConfig, TelegramConfigPydantic
+from vladpy_telegram_ro_bot._application._config._bot_config import BotConfig, BotConfigPydantic
 
 
 class Application:
@@ -39,6 +39,7 @@ class Application:
 
 		initiate_logs()
 
+		self.__read_config()
 		self.__create_appplication()
 		assert self.__application is not None
 
@@ -51,9 +52,9 @@ class Application:
 		self.__logger.info('run end')
 
 
-	def __create_appplication(self,) -> None:
+	def __read_config(self,) -> None:
 
-		self.__logger.info('create application begin')
+		self.__logger.info('read config begin')
 
 		with (
 				open(
@@ -90,6 +91,15 @@ class Application:
 		)
 
 		self.__logger.info('gcloud credentials read')
+
+		self.__logger.info('read config end')
+
+
+	def __create_appplication(self,) -> None:
+
+		self.__logger.info('create application begin')
+
+		assert self.__telegram_config is not None
 
 		self.__bot = (
 			Bot(
@@ -143,20 +153,20 @@ class Application:
 		self.__logger.info('bot commands set')
 
 		await application.bot.set_my_description(
-			description=Answer.description(None),
+			description=Reply.description(None),
 		)
 
 		await application.bot.set_my_description(
-			description=Answer.description('ru'),
+			description=Reply.description('ru'),
 			language_code='ru',
 		)
 
 		await application.bot.set_my_short_description(
-			short_description=Answer.short_description(None),
+			short_description=Reply.short_description(None),
 		)
 
 		await application.bot.set_my_short_description(
-			short_description=Answer.short_description('ru'),
+			short_description=Reply.short_description('ru'),
 			language_code='ru',
 		)
 
@@ -164,8 +174,12 @@ class Application:
 
 		application.add_error_handler(self.__handle_error)
 
-		usernames_whitelist_filter = telegram.ext.filters.User()
-		usernames_whitelist_filter.add_usernames(self.__bot_config.usernames_whitelist)
+		usernames_whitelist_filter = (
+			telegram.ext.filters.User(
+				allow_empty=(self.__bot_config.usernames_whitelist is None),
+				username=self.__bot_config.usernames_whitelist,
+			)
+		)
 
 		for command in Command.command_sequence(None):
 

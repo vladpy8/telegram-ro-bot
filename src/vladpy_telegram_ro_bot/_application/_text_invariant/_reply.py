@@ -8,7 +8,7 @@ import telegram.helpers
 # TODO fix: stubs
 
 
-class Answer:
+class Reply:
 
 
 	@staticmethod
@@ -62,10 +62,10 @@ class Answer:
 
 		return (
 			({
-				'en': Answer.hello_en,
-				'ru': Answer.hello_ru,
+				'en': Reply.hello_en,
+				'ru': Reply.hello_ru,
 			})
-			[Answer.reduce_language_code(language_code)]
+			[Reply.reduce_language_code(language_code)]
 		)
 
 
@@ -86,10 +86,10 @@ class Answer:
 
 		return (
 			({
-				'en': Answer.unknown_en,
-				'ru': Answer.unknown_ru,
+				'en': Reply.unknown_en,
+				'ru': Reply.unknown_ru,
 			})
-			[Answer.reduce_language_code(language_code)]
+			[Reply.reduce_language_code(language_code)]
 		)
 
 
@@ -110,10 +110,10 @@ class Answer:
 
 		return (
 			({
-				'en': Answer.help_en,
-				'ru': Answer.help_ru,
+				'en': Reply.help_en,
+				'ru': Reply.help_ru,
 			})
-			[Answer.reduce_language_code(language_code)]
+			[Reply.reduce_language_code(language_code)]
 		)
 
 
@@ -134,10 +134,10 @@ class Answer:
 
 		return (
 			({
-				'en': Answer.about_en,
-				'ru': Answer.about_ru,
+				'en': Reply.about_en,
+				'ru': Reply.about_ru,
 			})
-			[Answer.reduce_language_code(language_code)]
+			[Reply.reduce_language_code(language_code)]
 		)
 
 
@@ -158,10 +158,10 @@ class Answer:
 
 		return (
 			({
-				'en': Answer.description_en,
-				'ru': Answer.description_ru,
+				'en': Reply.description_en,
+				'ru': Reply.description_ru,
 			})
-			[Answer.reduce_language_code(language_code)]
+			[Reply.reduce_language_code(language_code)]
 		)
 
 
@@ -182,8 +182,8 @@ class Answer:
 
 		return (
 			({
-				'en': Answer.short_description_en,
-				'ru': Answer.short_description_ru,
+				'en': Reply.short_description_en,
+				'ru': Reply.short_description_ru,
 			})
-			[Answer.reduce_language_code(language_code)]
+			[Reply.reduce_language_code(language_code)]
 		)

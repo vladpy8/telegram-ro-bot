@@ -1,6 +1,6 @@
 import click
 
-from vladpy_telegram_ro_bot._application import Application
+from vladpy_telegram_ro_bot._application._application import Application
 
 
 # TODO fix: version option

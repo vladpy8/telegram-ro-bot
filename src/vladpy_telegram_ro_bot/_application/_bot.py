@@ -6,10 +6,10 @@ import telegram.ext
 import telegram.error
 import telegram.constants
 
-from vladpy_telegram_ro_bot._constants._command import Command
-from vladpy_telegram_ro_bot._constants._answer import Answer
-from vladpy_telegram_ro_bot._translator import Translator
-from vladpy_telegram_ro_bot._config._bot_config import BotConfig
+from vladpy_telegram_ro_bot._application._text_invariant._command import Command
+from vladpy_telegram_ro_bot._application._text_invariant._reply import Reply
+from vladpy_telegram_ro_bot._application._translator._translator import Translator
+from vladpy_telegram_ro_bot._application._config._bot_config import BotConfig
 
 
 class Bot:
@@ -56,7 +56,11 @@ class Bot:
 			self.__logger.warning('command handle end [%s], user is bot', update.update_id)
 			return
 
-		if update.effective_user.username not in self.__config.usernames_whitelist:
+		if (
+				self.__config.usernames_whitelist is not None
+				and update.effective_user.username not in self.__config.usernames_whitelist
+			):
+
 			self.__logger.warning('command handle end [%s], user is not in whitelist', update.update_id)
 			return
 
@@ -78,7 +82,7 @@ class Bot:
 					chat_id=update.effective_chat.id,
 					update_id=update.update_id,
 					message_id=message.id,
-					text=Answer.hello(language_code),
+					text=Reply.hello(language_code),
 				)
 			)
 
@@ -92,7 +96,7 @@ class Bot:
 					chat_id=update.effective_chat.id,
 					update_id=update.update_id,
 					message_id=message.id,
-					text=Answer.help(language_code),
+					text=Reply.help(language_code),
 				)
 			)
 
@@ -106,7 +110,7 @@ class Bot:
 					chat_id=update.effective_chat.id,
 					update_id=update.update_id,
 					message_id=message.id,
-					text=Answer.about(language_code),
+					text=Reply.about(language_code),
 				)
 			)
 
@@ -120,7 +124,7 @@ class Bot:
 					chat_id=update.effective_chat.id,
 					update_id=update.update_id,
 					message_id=message.id,
-					text=Answer.unknown(language_code),
+					text=Reply.unknown(language_code),
 				)
 			)
 
@@ -139,7 +143,10 @@ class Bot:
 			self.__logger.warning('translation handle end [%s], no chat', update.update_id)
 			return
 
-		if update.effective_user is None:
+		if (
+				update.effective_user is None
+				or update.effective_user.username is None
+			):
 			self.__logger.warning('translation handle end [%s], no user', update.update_id)
 			return
 
@@ -147,7 +154,11 @@ class Bot:
 			self.__logger.warning('translation handle end [%s], user bot', update.update_id)
 			return
 
-		if update.effective_user.username not in self.__config.usernames_whitelist:
+		if (
+				self.__config.usernames_whitelist is not None
+				and update.effective_user.username not in self.__config.usernames_whitelist
+			):
+
 			self.__logger.warning('translation handle end [%s], user not in whitelist', update.update_id)
 			return
 
@@ -170,12 +181,13 @@ class Bot:
 		language_code = update.effective_user.language_code
 
 		# TODO fix: better user responses
+		# TODO fix: translate into english in case of ro
 
 		if language_code == 'ro':
 			self.__logger.warning('translation handle end [%s], no translation required', update.update_id)
 			return
 
-		# TODO design: fast response in case of latency
+		# TODO improve: fast response in case of latency
 		# TODO fix: handle long texts
 
 		translation = (
