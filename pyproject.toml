@@ -37,6 +37,10 @@ build-backend = "pdm.backend"
 
 [tool.pylint]
 
+[tool.pylint.basic]
+const-naming-style="PascalCase"
+class-const-naming-style="PascalCase"
+
 [tool.pylint.format]
 indent-string="\t"
 max-line-length=120

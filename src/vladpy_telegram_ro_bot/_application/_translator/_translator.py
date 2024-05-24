@@ -1,14 +1,15 @@
 import typing
 import logging
 
-
 import telegram
 import telegram.helpers
 import langdetect # type: ignore
 import google.cloud.translate
 import google.api_core
 import google.api_core.retry_async
+import google.oauth2.service_account  # type: ignore
 
+from vladpy_telegram_ro_bot._application._translator._translate_result import TranslateResult, TranslateResultCode
 from vladpy_telegram_ro_bot._application._translator._message_sentences_extractor import MessageSentencesExtractor
 from vladpy_telegram_ro_bot._application._config._bot_config import BotConfig
 from vladpy_telegram_ro_bot._application._defaults._gcloud_client_defaults import GCLoudClientDefaults
@@ -26,7 +27,7 @@ class Translator:
 	def __init__(
 			self,
 			config: BotConfig,
-			gcloud_credentials: typing.Any,
+			gcloud_credentials: google.oauth2.service_account.Credentials,
 		) -> None:
 
 		self.__logger = logging.getLogger('vladpy_telegram_ro_bot.Translator')
@@ -83,7 +84,7 @@ class Translator:
 			message: telegram.Message,
 			language_code: typing.Optional[str],
 			username: str,
-		) -> typing.Optional[str]:
+		) -> TranslateResult:
 
 		self.__logger.info('translate begin [%s]', update_id)
 
@@ -101,7 +102,7 @@ class Translator:
 
 		if message_text is None:
 			self.__logger.warning('translate end [%s], no text', update_id)
-			return None
+			return TranslateResult(code=TranslateResultCode.NoTranslateText)
 
 		message_target_language_detect_f = False
 
@@ -114,13 +115,14 @@ class Translator:
 				)
 			)
 
-		if (
-				not message_target_language_detect_f
-				and not self.__use_langdetect_f
-			):
+			self.__logger.info('translate [%s], language detect', update_id)
 
+		if (
+				self.__use_langdetect_f
+				and not message_target_language_detect_f
+			):
 			self.__logger.info('translate end [%s], no target language', update_id)
-			return None
+			return TranslateResult(code=TranslateResultCode.NoTargetLanguage)
 
 		message_entities_dict: dict[telegram.MessageEntity, str] = dict()
 
@@ -141,11 +143,15 @@ class Translator:
 		del message_text
 		del message_entities_dict
 
+		self.__logger.info('translate [%s], sentences extract', update_id)
+
 		if len(message_sentences_list) == 0:
 			self.__logger.info('translate end [%s], nothing to translate', update_id)
-			return None
+			return TranslateResult(code=TranslateResultCode.NoTranslateText)
 
 		if self.__use_gcloud_f:
+
+			self.__logger.info('translate [%s], gcloud request', update_id)
 
 			translate_senteces_list = (
 				await self.__translate_gcloud(
@@ -155,6 +161,8 @@ class Translator:
 				)
 			)
 
+			self.__logger.info('translate [%s], gcloud response', update_id)
+
 			translation = (
 				self.__format_translation_reply(
 					message_sentences_list=message_sentences_list,
@@ -163,6 +171,9 @@ class Translator:
 			)
 
 		else:
+
+			self.__logger.info('translate [%s], dummy translation', update_id)
+
 			translation = (
 				self.__format_translation_reply(
 					message_sentences_list=message_sentences_list,
@@ -170,7 +181,27 @@ class Translator:
 				)
 			)
 
-		return translation
+		self.__logger.info('translate end [%s], success', update_id)
+
+		return TranslateResult(code=TranslateResultCode.Success, translation=translation,)
+
+
+	def __detect_target_language(
+			self,
+			message_text: str,
+			language_code: str,
+			probability_threshold: float = .5,
+		) -> bool:
+
+		return (
+			any((
+				(
+					(message_language.lang == language_code)
+					and (message_language.prob >= probability_threshold)
+				)
+				for message_language in langdetect.detect_langs(message_text) # type: ignore
+			))
+		)
 
 
 	async def __translate_gcloud(
@@ -208,24 +239,6 @@ class Translator:
 		]
 
 		return translate_senteces_list
-
-
-	def __detect_target_language(
-			self,
-			message_text: str,
-			language_code: str,
-			probability_threshold: float = .5,
-		) -> bool:
-
-		return (
-			any((
-				(
-					(message_language.lang == language_code)
-					and (message_language.prob >= probability_threshold)
-				)
-				for message_language in langdetect.detect_langs(message_text) # type: ignore
-			))
-		)
 
 
 	def __format_translation_reply(

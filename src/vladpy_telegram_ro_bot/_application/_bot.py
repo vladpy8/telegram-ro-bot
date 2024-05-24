@@ -4,7 +4,7 @@ import logging
 import telegram
 import telegram.ext
 import telegram.error
-import telegram.constants
+import google.oauth2.service_account # type: ignore
 
 from vladpy_telegram_ro_bot._application._text_invariant._command import Command
 from vladpy_telegram_ro_bot._application._text_invariant._reply import Reply
@@ -18,7 +18,7 @@ class Bot:
 	def __init__(
 			self,
 			config: BotConfig,
-			gcloud_credentials: typing.Any,
+			gcloud_credentials: google.oauth2.service_account.Credentials,
 		) -> None:
 
 		self.__logger = logging.getLogger('vladpy_telegram_ro_bot.Bot')
@@ -230,7 +230,6 @@ class Bot:
 			await (
 				context.bot.send_message(
 					chat_id=chat_id,
-					parse_mode=telegram.constants.ParseMode.MARKDOWN_V2,
 					reply_parameters=(
 						telegram.ReplyParameters(
 							message_id=message_id,

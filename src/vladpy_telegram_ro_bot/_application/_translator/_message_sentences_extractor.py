@@ -4,6 +4,9 @@ import telegram
 import telegram.helpers
 
 
+# TODO fix: unit tests
+
+
 class MessageSentencesExtractor:
 
 

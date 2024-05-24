@@ -4,6 +4,7 @@ import functools
 
 import telegram
 import telegram.ext
+import telegram.constants
 import pydantic
 import google.oauth2.service_account # type: ignore
 
@@ -99,7 +100,9 @@ class Application:
 
 		self.__logger.info('create application begin')
 
+		assert self.__bot_config is not None
 		assert self.__telegram_config is not None
+		assert self.__gcloud_credentials is not None
 
 		self.__bot = (
 			Bot(
@@ -116,6 +119,10 @@ class Application:
 			.token(self.__telegram_config.token)
 			.concurrent_updates(True)
 			.rate_limiter(telegram.ext.AIORateLimiter())
+			.defaults(telegram.ext.Defaults(
+				block=False,
+				parse_mode=telegram.constants.ParseMode.MARKDOWN_V2,
+			))
 			.connect_timeout(ApplicationDefaults.connect_timeout.total_seconds())
 			.pool_timeout(ApplicationDefaults.pool_timeout.total_seconds())
 			.read_timeout(ApplicationDefaults.read_timeout.total_seconds())
