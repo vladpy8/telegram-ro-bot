@@ -14,7 +14,7 @@ from vladpy_telegram_ro_bot._application._translator._translate_result import Tr
 from vladpy_telegram_ro_bot._application._config._bot_config import BotConfig
 
 
-# TODO improve: fast response in case of latency
+# TODO feature: fast response in case of latency
 
 
 class Bot:

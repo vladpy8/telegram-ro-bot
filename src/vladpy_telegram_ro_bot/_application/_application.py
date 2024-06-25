@@ -19,10 +19,10 @@ from vladpy_telegram_ro_bot._application._config._telegram_config import Telegra
 from vladpy_telegram_ro_bot._application._config._bot_config import BotConfig, BotConfigPydantic
 
 
-# TODO critical fix: graceful shutdown
+# TODO fix: graceful shutdown
 # TODO fix: message to admin in case of an error
-# TODO improve: webhook (though duplicate messages might arrive)
-# TODO improve: persistence
+
+# TODO feature: webhook (though duplicate messages might arrive)
 
 
 class Application:

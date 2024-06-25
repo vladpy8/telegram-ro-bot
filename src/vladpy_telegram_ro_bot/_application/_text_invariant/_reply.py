@@ -6,9 +6,9 @@ import telegram.helpers
 
 # TODO fix: add Google Translate attribution
 # TODO fix: stubs
-# TODO fix: points need covering:
+# points need covering:
 #    - usage example
-#    - only selected messages got reply
+#    - only some messages got reply
 
 
 class Reply:
