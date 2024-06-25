@@ -27,7 +27,7 @@ from vladpy_telegram_ro_bot._application._defaults._gcloud_api_defaults import G
 
 
 # TODO fix: add Google Translate attribution
-# TODO fix: send message to admin in case of quota reach
+# TODO feature: send message to admin in case of quota reach
 
 
 class Translator:

@@ -7,7 +7,8 @@ import sys
 # TODO fix: multithreaded logging
 # TODO fix: create file when absent
 # TODO fix: multiple files with archiving
-# TODO improve: use gcloud logging
+
+# TODO feature: use gcloud logging
 
 
 def initiate_logs(
