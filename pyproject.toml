@@ -30,6 +30,10 @@ homepage = "https://github.com/vladpy8/telegram-ro-bot"
 repository = "https://github.com/vladpy8/telegram-ro-bot"
 
 
+# TODO stubs generation
+# TODO entrypoints
+
+
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
@@ -37,6 +41,9 @@ build-backend = "pdm.backend"
 
 [tool.pytest.ini_options]
 testpaths = "tests"
+addopts = [
+    "--import-mode=importlib",
+]
 
 
 [tool.pylint]
