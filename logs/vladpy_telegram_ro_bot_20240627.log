@@ -1,0 +1,266 @@
+2024-06-27 04:09:17,976 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094139}`
+2024-06-27 04:09:28,113 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-27 04:09:28,113 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-27 04:09:28,113 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094139}`
+2024-06-27 04:09:38,251 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-27 04:09:38,251 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-27 04:09:38,251 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094139}`
+2024-06-27 04:09:48,388 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-27 04:09:48,388 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-27 04:09:48,388 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094139}`
+2024-06-27 04:09:58,526 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-27 04:09:58,526 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-27 04:09:58,526 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094139}`
+2024-06-27 04:10:08,664 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-27 04:10:08,664 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-27 04:10:08,664 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094139}`
+2024-06-27 04:10:18,801 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-27 04:10:18,801 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-27 04:10:18,802 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094139}`
+2024-06-27 04:10:28,939 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-27 04:10:28,939 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-27 04:10:28,939 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094139}`
+2024-06-27 04:10:39,077 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-27 04:10:39,077 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-27 04:10:39,077 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094139}`
+2024-06-27 04:10:49,214 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-27 04:10:49,214 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-27 04:10:49,214 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094139}`
+2024-06-27 04:10:55,665 P19817|T139237607323456
+	telegram.ext.Updater ERROR
+	Error while getting Updates: Bad Gateway
+2024-06-27 04:10:55,666 P19817|T139237607323456
+	vladpy_telegram_ro_bot.Application ERROR
+	application error: Bad Gateway
+2024-06-27 04:10:56,667 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094139}`
+2024-06-27 04:10:56,722 P19817|T139237607323456
+	telegram.ext.Updater ERROR
+	Error while getting Updates: Bad Gateway
+2024-06-27 04:10:56,722 P19817|T139237607323456
+	vladpy_telegram_ro_bot.Application ERROR
+	application error: Bad Gateway
+2024-06-27 04:10:58,224 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094139}`
+2024-06-27 04:10:58,277 P19817|T139237607323456
+	telegram.ext.Updater ERROR
+	Error while getting Updates: Bad Gateway
+2024-06-27 04:10:58,277 P19817|T139237607323456
+	vladpy_telegram_ro_bot.Application ERROR
+	application error: Bad Gateway
+2024-06-27 04:11:00,530 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094139}`
+2024-06-27 04:11:38,060 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-27 04:11:38,060 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-27 04:11:38,060 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094139}`
+2024-06-27 04:11:48,197 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-27 04:11:48,197 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-27 04:11:48,197 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094139}`
+2024-06-27 04:11:58,335 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-27 04:11:58,335 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-27 04:11:58,335 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094139}`
+2024-06-27 04:12:08,473 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-27 04:12:08,473 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+
+
+
+
+
+
+
+
+2024-06-27 14:40:28,921 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094143}`
+2024-06-27 14:40:33,465 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[{'update_id': 440094143, 'message': {'message_id': 407, 'from': {'id': 217555405, 'is_bot': False, 'first_name': 'Анна', 'last_name': 'Дорошева', 'username': 'AnnDorosheva'}, 'chat': {'id': -4267387862, 'title': 'RoBot Debug', 'type': 'group', 'all_members_are_administrators': True}, 'date': 1719488433, 'reply_to_message': {'message_id': 406, 'from': {'id': 507630489, 'is_bot': False, 'first_name': 'Vladislav', 'last_name': 'Pyslaru', 'username': 'vladpy', 'language_code': 'en'}, 'chat': {'id': -4267387862, 'title': 'RoBot Debug', 'type': 'group', 'all_members_are_administrators': True}, 'date': 1719486483, 'text': 'кек'}, 'text': 'Жесть'}}]`
+2024-06-27 14:40:33,465 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Getting updates: [440094143]
+2024-06-27 14:40:33,466 P19817|T139237607323456
+	telegram.ext.Application DEBUG
+	Processing update Update(message=Message(channel_chat_created=False, chat=Chat(api_kwargs={'all_members_are_administrators': True}, id=-4267387862, title='RoBot Debug', type=<ChatType.GROUP>), date=datetime.datetime(2024, 6, 27, 11, 40, 33, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='Анна', id=217555405, is_bot=False, last_name='Дорошева', username='AnnDorosheva'), group_chat_created=False, message_id=407, reply_to_message=Message(channel_chat_created=False, chat=Chat(api_kwargs={'all_members_are_administrators': True}, id=-4267387862, title='RoBot Debug', type=<ChatType.GROUP>), date=datetime.datetime(2024, 6, 27, 11, 8, 3, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='Vladislav', id=507630489, is_bot=False, language_code='en', last_name='Pyslaru', username='vladpy'), group_chat_created=False, message_id=406, supergroup_chat_created=False, text='кек'), supergroup_chat_created=False, text='Жесть'), update_id=440094143)
+2024-06-27 14:40:33,466 P19817|T139237607323456
+	vladpy_telegram_ro_bot.Bot INFO
+	translation handle begin [440094143]
+2024-06-27 14:40:33,466 P19817|T139237607323456
+	vladpy_telegram_ro_bot.Translator INFO
+	translate begin [440094143]
+2024-06-27 14:40:33,466 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094144}`
+2024-06-27 14:40:33,468 P19817|T139237607323456
+	vladpy_telegram_ro_bot.Translator INFO
+	translate [440094143], language detect
+2024-06-27 14:40:33,468 P19817|T139237607323456
+	vladpy_telegram_ro_bot.Translator INFO
+	translate end [440094143], no target language
+2024-06-27 14:40:33,468 P19817|T139237607323456
+	vladpy_telegram_ro_bot.Bot INFO
+	translation handle end [440094143], no translation
+2024-06-27 14:40:42,169 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[{'update_id': 440094144, 'message': {'message_id': 408, 'from': {'id': 507630489, 'is_bot': False, 'first_name': 'Vladislav', 'last_name': 'Pyslaru', 'username': 'vladpy', 'language_code': 'en'}, 'chat': {'id': -4267387862, 'title': 'RoBot Debug', 'type': 'group', 'all_members_are_administrators': True}, 'date': 1719488442, 'reply_to_message': {'message_id': 407, 'from': {'id': 217555405, 'is_bot': False, 'first_name': 'Анна', 'last_name': 'Дорошева', 'username': 'AnnDorosheva'}, 'chat': {'id': -4267387862, 'title': 'RoBot Debug', 'type': 'group', 'all_members_are_administrators': True}, 'date': 1719488433, 'text': 'Жесть'}, 'text': '??'}}]`
+2024-06-27 14:40:42,169 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Getting updates: [440094144]
+2024-06-27 14:40:42,169 P19817|T139237607323456
+	telegram.ext.Application DEBUG
+	Processing update Update(message=Message(channel_chat_created=False, chat=Chat(api_kwargs={'all_members_are_administrators': True}, id=-4267387862, title='RoBot Debug', type=<ChatType.GROUP>), date=datetime.datetime(2024, 6, 27, 11, 40, 42, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='Vladislav', id=507630489, is_bot=False, language_code='en', last_name='Pyslaru', username='vladpy'), group_chat_created=False, message_id=408, reply_to_message=Message(channel_chat_created=False, chat=Chat(api_kwargs={'all_members_are_administrators': True}, id=-4267387862, title='RoBot Debug', type=<ChatType.GROUP>), date=datetime.datetime(2024, 6, 27, 11, 40, 33, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='Анна', id=217555405, is_bot=False, last_name='Дорошева', username='AnnDorosheva'), group_chat_created=False, message_id=407, supergroup_chat_created=False, text='Жесть'), supergroup_chat_created=False, text='??'), update_id=440094144)
+2024-06-27 14:40:42,170 P19817|T139237607323456
+	vladpy_telegram_ro_bot.Bot INFO
+	translation handle begin [440094144]
+2024-06-27 14:40:42,170 P19817|T139237607323456
+	vladpy_telegram_ro_bot.Translator INFO
+	translate begin [440094144]
+2024-06-27 14:40:42,170 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094145}`
+2024-06-27 14:40:42,178 P19817|T139237607323456
+	telegram.ext.Application DEBUG
+	Application received stop signal. Shutting down.
+2024-06-27 14:40:42,178 P19817|T139237607323456
+	vladpy_telegram_ro_bot.Application ERROR
+	application error: A process in the process pool was terminated abruptly while the future was running or pending.
+2024-06-27 14:40:42,178 P19817|T139237607323456
+	telegram.ext.Updater DEBUG
+	Stopping Updater
+2024-06-27 14:40:42,178 P19817|T139237607323456
+	telegram.ext.Updater DEBUG
+	Waiting background polling task to finish up.
+2024-06-27 14:40:42,178 P19817|T139237607323456
+	telegram.ext.Updater DEBUG
+	Network loop retry getting Updates was cancelled
+2024-06-27 14:40:42,178 P19817|T139237607323456
+	telegram.ext.Updater DEBUG
+	Calling `get_updates` one more time to mark all fetched updates as read.
+2024-06-27 14:40:42,178 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 0, 'offset': 440094145}`
+2024-06-27 14:40:44,456 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[{'update_id': 440094145, 'message': {'message_id': 409, 'from': {'id': 507630489, 'is_bot': False, 'first_name': 'Vladislav', 'last_name': 'Pyslaru', 'username': 'vladpy', 'language_code': 'en'}, 'chat': {'id': -4267387862, 'title': 'RoBot Debug', 'type': 'group', 'all_members_are_administrators': True}, 'date': 1719488444, 'text': 'почему жесть?'}}]`
+2024-06-27 14:40:44,456 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	Getting updates: [440094145]
+2024-06-27 14:40:44,456 P19817|T139237607323456
+	telegram.ext.Updater DEBUG
+	Updater.stop() is complete
+2024-06-27 14:40:44,457 P19817|T139237607323456
+	telegram.ext.Application INFO
+	Application is stopping. This might take a moment.
+2024-06-27 14:40:44,457 P19817|T139237607323456
+	telegram.ext.Application DEBUG
+	Waiting for update_queue to join
+2024-06-27 14:40:44,457 P19817|T139237607323456
+	telegram.ext.Application DEBUG
+	Application stopped fetching of updates.
+2024-06-27 14:40:44,457 P19817|T139237607323456
+	telegram.ext.Application DEBUG
+	Waiting for running jobs to finish
+2024-06-27 14:40:44,467 P19817|T139237607323456
+	telegram.ext.Application DEBUG
+	JobQueue stopped
+2024-06-27 14:40:44,468 P19817|T139237607323456
+	telegram.ext.Application DEBUG
+	Waiting for `create_task` calls to be processed
+2024-06-27 14:40:44,468 P19817|T139237607323456
+	telegram.ext.Application INFO
+	Application.stop() complete
+2024-06-27 14:40:44,468 P19817|T139237607323456
+	telegram.ext.ExtBot DEBUG
+	This Bot is already shut down. Returning.
+2024-06-27 14:40:44,468 P19817|T139237607323456
+	telegram.ext.Updater DEBUG
+	Shut down of Updater complete
+2024-06-27 14:40:44,468 P19817|T139237607323456
+	vladpy_telegram_ro_bot.Application INFO
+	shutdown begin
+2024-06-27 14:40:44,469 P19817|T139237607323456
+	vladpy_telegram_ro_bot.Application INFO
+	shutdown end
+2024-06-27 14:40:44,469 P19817|T139237607323456
+	vladpy_telegram_ro_bot.Application INFO
+	run end

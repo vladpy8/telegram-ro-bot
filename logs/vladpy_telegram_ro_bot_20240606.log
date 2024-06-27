@@ -1,0 +1,261 @@
+2024-06-05 04:08:01,262 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:08:11,399 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:08:11,399 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:08:11,400 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:08:21,537 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:08:21,537 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:08:21,537 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:08:31,675 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:08:31,675 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:08:31,675 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:08:41,812 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:08:41,812 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:08:41,813 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:08:51,950 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:08:51,950 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:08:51,950 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:09:02,087 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:09:02,088 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:09:02,088 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:09:12,225 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:09:12,225 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:09:12,225 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:09:22,363 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:09:22,363 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:09:22,363 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:09:32,501 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:09:32,501 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:09:32,501 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:09:42,638 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:09:42,638 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:09:42,639 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:09:52,776 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:09:52,776 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:09:52,776 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:10:02,914 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:10:02,914 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:10:02,914 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:10:13,051 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:10:13,052 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:10:13,052 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:10:23,189 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:10:23,189 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:10:23,189 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:10:33,747 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:10:33,747 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:10:33,748 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:10:43,874 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:10:43,874 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:10:43,874 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:10:54,011 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:10:54,011 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:10:54,011 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:11:04,149 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:11:04,150 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:11:04,150 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:11:14,287 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:11:14,287 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:11:14,287 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:11:20,739 P102297|T128575585294144
+	telegram.ext.Updater ERROR
+	Error while getting Updates: Bad Gateway
+2024-06-05 04:11:20,739 P102297|T128575585294144
+	vladpy_telegram_ro_bot.Application ERROR
+	application error: Bad Gateway
+2024-06-05 04:11:21,740 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:11:21,787 P102297|T128575585294144
+	telegram.ext.Updater ERROR
+	Error while getting Updates: Bad Gateway
+2024-06-05 04:11:21,787 P102297|T128575585294144
+	vladpy_telegram_ro_bot.Application ERROR
+	application error: Bad Gateway
+2024-06-05 04:11:23,289 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:11:23,337 P102297|T128575585294144
+	telegram.ext.Updater ERROR
+	Error while getting Updates: Bad Gateway
+2024-06-05 04:11:23,337 P102297|T128575585294144
+	vladpy_telegram_ro_bot.Application ERROR
+	application error: Bad Gateway
+2024-06-05 04:11:25,590 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:11:56,784 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:11:56,784 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:11:56,784 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:12:06,921 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:12:06,921 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:12:06,921 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:12:17,059 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:12:17,059 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:12:17,059 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:12:27,196 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:12:27,197 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:12:27,197 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:12:37,334 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:12:37,334 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:12:37,335 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:12:47,472 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:12:47,472 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
+2024-06-05 04:12:47,472 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Calling Bot API endpoint `getUpdates` with parameters `{'timeout': 10, 'offset': 440094118}`
+2024-06-05 04:12:57,610 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	Call to Bot API endpoint `getUpdates` finished with return value `[]`
+2024-06-05 04:12:57,610 P102297|T128575585294144
+	telegram.ext.ExtBot DEBUG
+	No new updates found.
