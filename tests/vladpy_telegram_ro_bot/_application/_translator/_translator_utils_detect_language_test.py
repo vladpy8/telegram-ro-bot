@@ -44,3 +44,14 @@ def test_short_mixed() -> None:
 			)
 		)
 	)
+
+	assert (
+		detect_target_language(
+			language_code='ro',
+			message_text=(
+				process_text('''
+					Eu am pisici
+				''')
+			)
+		)
+	)

@@ -258,7 +258,7 @@ class Translator:
 						contents=message_sentences_list,
 						labels={
 							'application': self.__config.gcloud_application_label,
-							'username': username[:GCLoudApiDefaults.label_max_length],
+							'username': username[:GCLoudApiDefaults.label_max_length].lower(),
 						},
 					),
 					timeout=GCLoudApiDefaults.request_timeout.total_seconds(),
