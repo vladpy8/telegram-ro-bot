@@ -20,6 +20,7 @@ from vladpy_telegram_ro_bot._application._config._bot_config import BotConfig, B
 
 
 # TODO fix: graceful shutdown
+# TODO fix: bugs from logs
 # TODO fix: message to admin in case of an error
 
 # TODO feature: webhook (though duplicate messages might arrive)
